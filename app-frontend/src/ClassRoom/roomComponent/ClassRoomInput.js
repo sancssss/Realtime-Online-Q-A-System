@@ -43,7 +43,8 @@ export default class ClassRoomInput extends Component {
         username: this.state.myName,
         message: message
       }
-      socket.emit('message', object);
+      console.log('sent object'+  JSON.stringify(object));
+      socket.emit('text',  object);
       this.setState({message: ''});
     }
     return false;

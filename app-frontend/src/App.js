@@ -3,12 +3,12 @@ import ClassRoom from './ClassRoom/ClassRoom';
 import io from 'socket.io-client';
 
 export default class App extends Component {
+  socket = io('http://localhost:5000/class');
   constructor(props) {
     super(props);
     this.state = {
       username: '',
       uid: '',
-      socket: io('http://localhost:5000/class')
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -41,13 +41,14 @@ export default class App extends Component {
       uid: uid,
       username: username
     });
-    this.state.socket.emit('login', {uid: uid, username: username})
+    let loginObj = {uid: uid, username: username};
+    this.socket.emit('joined', loginObj)
   }
 
   render() {
       let renderDOM;
       if(this.state.uid) {
-        renderDOM = <ClassRoom uid={this.state.uid} username={this.state.username} socket={this.state.socket}/>
+        renderDOM = <ClassRoom uid={this.state.uid} username={this.state.username} socket={this.socket}/>
       } else {
         renderDOM = (
           <div className="login-box">

@@ -4,15 +4,16 @@ import ClassRoomMessage from './roomComponent/ClassRoomMessage';
 import ClassRoomInput from './roomComponent/ClassRoomInput';
 
 export default class ClassRoom extends Component {
+  socket = '';
   constructor(props) {
     super(props);
-    const socket = this.props.socket;
+    this.socket = this.props.socket;
     this.state = {
       myId: this.props.uid,//current use id
       myName: this.props.username,
       uid: this.props.uid,//use this to distinguish all user
       username: this.props.username,
-      socket: socket,
+      //socket: socket,
       messages: [],//message list
       onlineUsers: {},
       onlineCount: 0,
@@ -52,7 +53,7 @@ export default class ClassRoom extends Component {
       let messages = this.state.messages;
       const newMsg = {
         type: 'system',//msg type
-        username: obj.user.username,
+        username: obj.username,
         uid: obj.uid,//user id
         action: action,//login or logout
         msgId: this.generateMsgId(),//message id(randomly generate)
@@ -70,14 +71,14 @@ export default class ClassRoom extends Component {
   }
 
   //update normal message
-  updateMsg(obj, action) {
+  updateMsg(obj) {
     //get the current message list
       let messages = this.state.messages;
       const newMsg = {
-        type: 'system',//msg type
-        username: obj.user.username,
+        type: 'normal',//msg type
+        username: obj.username,
         uid: obj.uid,//user id
-        action: action,//login or logout
+        action: obj.message,//message content
         msgId: this.generateMsgId(),//message id(randomly generate)
         time: this.generateTime(),
       };
@@ -94,10 +95,11 @@ export default class ClassRoom extends Component {
   }
 
   ready() {
-    const socket = this.state.socket;
+    let socket = this.socket;
 
     //client monitor login
     socket.on('joined', (obj) => {
+      console.log("===joined===,socketid=" + socket.id);
       this.updateSystemMsg(obj, 'login');
     });
 
@@ -108,6 +110,8 @@ export default class ClassRoom extends Component {
 
     //client monitor send msg
     socket.on('text', (obj) => {
+      console.log("===text===");
+      //console.log('ssent object'+  JSON.stringify(obj));
       this.updateMsg(obj);
     })
   }
@@ -115,7 +119,7 @@ export default class ClassRoom extends Component {
   render() {
     return (
       <div className="class-room">
-        <div classRoom="title">
+        <div className="title">
           <div className="title-name">
             prof. Chen classroom | student:{this.state.myName}
           </div>
@@ -126,7 +130,7 @@ export default class ClassRoom extends Component {
           <ClassRoomState onlineCount={this.state.onlineCount} userhtml={this.state.userHtml}/>
           <div ref="message-area">
             <ClassRoomMessage messages={this.state.messages} myId={this.state.myId} />
-            <ClassRoomInput myId={this.state.myId} myName={this.state.myName} socket={this.state.socket} />
+            <ClassRoomInput myId={this.state.myId} myName={this.state.myName} socket={this.socket} />
           </div>
       </div>
     );

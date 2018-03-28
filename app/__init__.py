@@ -2,8 +2,7 @@ from flask import Flask
 
 from .main import server, api, events
 from .main.events import socketio
-
-
+from .main.models import db
 
 app = Flask(__name__,  static_folder="../app-frontend/build/static", template_folder="../app-frontend/build/static")
 

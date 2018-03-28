@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import ClassRoom from './ClassRoom/ClassRoom';
 import io from 'socket.io-client';
-import 'es6-promise';
-import 'isomorphic-fetch';
 import fetch from 'isomorphic-fetch';
+import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon } from 'react-bootstrap';
 
 export default class App extends Component {
   socket = io('http://localhost:5000/class');
@@ -109,17 +108,42 @@ export default class App extends Component {
         const password = this.state.password;
         const roomId = this.state.roomId;
         renderDOM = (
-          <div className="login-box">
-            <h2>Login</h2>
-            <div className="input">
-              <input name="username" type="text" placeholder="input username" value={username} onChange={this.handleChange} />
-              <input name="password" type="text" placeholder="input password" value={password} onChange={this.handleChange} />
-              <input name="roomId" type="text" placeholder="input roomId" value={roomId} onChange={this.handleChange} />
-            </div>
-            <div className="submit">
-              <button type="button" onClick={this.handleClick}>Submit</button>
-            </div>
-          </div>
+              <Form horizontal>
+                  <FormGroup>
+                    <Col xs={5} xsOffset={1}>
+                  <h2>Start</h2>
+                    </Col>
+                  </FormGroup>
+                  <FormGroup controlId="formHorizontalText">
+                    <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
+                      <h4><Glyphicon glyph="user" /></h4>
+                    </Col>
+                    <Col xs={7}>
+                      <FormControl name="username" type="text" placeholder="input your username" value={username} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup controlId="formHorizontalPassword">
+                    <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
+                      <h4><Glyphicon glyph="eye-close" /></h4>
+                    </Col>
+                    <Col xs={7}>
+                      <FormControl name="password" type="password" placeholder="input your password" value={password} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup controlId="formHorizontalPassword">
+                    <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
+                      <h4><Glyphicon glyph="log-in" /></h4>
+                    </Col>
+                    <Col xs={7}>
+                      <FormControl name="roomId" type="text" placeholder="input classroom ID" value={roomId} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup>
+                  <Col xsOffset={2} xs={7}>
+                  <Button type="submit" bsStyle="primary" onClick={this.handleClick}>Enter Now</Button>
+                  </Col>
+                  </FormGroup>
+              </Form>
         );
       }
       return (<div>{renderDOM}</div>);

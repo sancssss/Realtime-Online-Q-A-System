@@ -13,6 +13,7 @@ export default class ClassRoom extends Component {
       myName: this.props.username,
       uid: this.props.uid,//use this to distinguish all user
       username: this.props.username,
+      roomId: this.props.roomId,
       //socket: socket,
       messages: [],//message list
       onlineUsers: {},
@@ -96,7 +97,7 @@ export default class ClassRoom extends Component {
 
   ready() {
     let socket = this.socket;
-
+    //let roomId = this.state.roomId;
     //client monitor login
     socket.on('joined', (obj) => {
       console.log("===joined===,socketid=" + socket.id);
@@ -121,7 +122,7 @@ export default class ClassRoom extends Component {
       <div className="class-room">
         <div className="title">
           <div className="title-name">
-            prof. Chen classroom | student:{this.state.myName}
+            prof. Chen classroom | student:{this.state.myName} | roomId:{this.state.roomId}
           </div>
           <div className="logout-button">
             <button onClick={this.handleLogout}>logout</button>
@@ -130,7 +131,7 @@ export default class ClassRoom extends Component {
           <ClassRoomState onlineCount={this.state.onlineCount} userhtml={this.state.userHtml}/>
           <div ref="message-area">
             <ClassRoomMessage messages={this.state.messages} myId={this.state.myId} />
-            <ClassRoomInput myId={this.state.myId} myName={this.state.myName} socket={this.socket} />
+            <ClassRoomInput myId={this.state.myId} myName={this.state.myName} roomId={this.state.roomId} socket={this.socket} />
           </div>
       </div>
     );

@@ -8,7 +8,8 @@ export default class ClassRoomInput extends Component {
       socket: this.props.socket,
       message: '',
       myId: this.props.myId,
-      myName: this.props.myName
+      myName: this.props.myName,
+      roomId: this.props.roomId
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -44,7 +45,7 @@ export default class ClassRoomInput extends Component {
         message: message
       }
       console.log('sent object'+  JSON.stringify(object));
-      socket.emit('text',  object);
+      socket.emit('text',  object, this.state.roomId);
       this.setState({message: ''});
     }
     return false;

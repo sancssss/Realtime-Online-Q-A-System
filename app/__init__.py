@@ -1,11 +1,11 @@
+from . import main
 from flask import Flask
-
-from .main import server, api, events
-from .main.events import socketio
-from .main.models import db
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__,  static_folder="../app-frontend/build/static", template_folder="../app-frontend/build/static")
-
+#initiate SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/interaction_yzu'
+db = SQLAlchemy(app)
 
 def create_app(debug=False):
     """create an application"""
@@ -15,3 +15,6 @@ def create_app(debug=False):
     app.register_blueprint(main_blueprint)
     socketio.init_app(app)
     return app
+
+from .main import server, api, events
+from .main.events import socketio

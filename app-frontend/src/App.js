@@ -1,26 +1,25 @@
 import React, {Component} from 'react';
-import ClassRoom from './ClassRoom/ClassRoom';
 import io from 'socket.io-client';
 import fetch from 'isomorphic-fetch';
-import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon } from 'react-bootstrap';
+import ClassRoom from './ClassRoom/ClassRoom';
+import Login from './CustomComponent/Login';
+import TeacherCreateQuestion from './CustomComponent/TeacherCreateQuestion';
 
 export default class App extends Component {
   socket = io('http://localhost:5000/class');
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      userid: '',
       password: '',
-      roomId: '',
-      uid: '',
+      //roomId: '',
+      currentPage: 'index_login',//switch page by this state
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleTCQuestionChange = this.handleTCQuestionChange.bind(this);
   }
 
-  generatUserid() {
-     return new Date().getTime()+""+Math.floor(Math.random()*9+1);
-  }
 
   handleChange(event) {
     const target = event.target;
@@ -38,10 +37,10 @@ export default class App extends Component {
     this.handleLogin();
   }
 
-  checkLogin(username, password) {
+  checkLogin(userid, password) {
     const uri = 'http://localhost:5000/Login';
     const data = {
-      "username": username,
+      "userid": userid,
       "password": password
     }
     return fetch(uri, {
@@ -58,93 +57,81 @@ export default class App extends Component {
     }).then(
       function(json) {
         console.log("obj.json:" + json.isOk);
+        //isOK == 1 mean login data is vaild
         if(json.isOk === '1') {
-          return true;
+          return {
+            result: true,
+            role: json.role,
+          };
         }else {
           console.log("login error by login data");
-          return false;
+          return {
+            result: false
+          };
         }
       }
     ).catch(
       function(exception) {
         console.log('login error by exception', exception);
-        return false;
+        return {
+          result: false
+        };
       }
     );
   }
 
   handleLogin() {
-    let username = this.state.username;
+    let userid = this.state.userid;
     let password = this.state.password;
-    let roomId = this.state.roomId;
-    const uid = this.generatUserid();
-    if(!username) {
-      username = 'guest' +  uid;
-    }
-    this.checkLogin(username, password).then(
+    this.checkLogin(userid, password).then(
         //use "=>" do not create a new this and this.setState issue solved
         (isVaild) => {
-        if(isVaild === true) {
-          this.setState({
-            uid: uid,
-            username: username
-          });
-
-          let loginObj = {uid: uid, username: username};
+        if(isVaild.result === true) {
+          if(isVaild.role === 'teacher') {
+            this.setState({
+              currentPage: 'teacher_create_question',
+            });
+          }
+          if(isVaild.role === 'student') {
+            this.setState({
+              currentPage: 'student_enter_question',
+            });
+          }
+          /*
+          let loginObj = {uid: uid, userid: userid};
           this.socket.emit('joined', loginObj, roomId);
           return true;
+          */
         }
       }
     );
     return false;
   }
 
+  handleTCQuestionChange(currentPage) {
+    this.setState({
+      currentPage: currentPage,
+    });
+  }
+
   render() {
       let renderDOM;
-      if(this.state.uid) {
-        renderDOM = <ClassRoom roomId={this.state.roomId} uid={this.state.uid} username={this.state.username} socket={this.socket}/>
-      } else {
-        const username = this.state.username;
-        const password = this.state.password;
-        const roomId = this.state.roomId;
-        renderDOM = (
-              <Form horizontal>
-                  <FormGroup>
-                    <Col xs={5} xsOffset={1}>
-                  <h2>Start</h2>
-                    </Col>
-                  </FormGroup>
-                  <FormGroup controlId="formHorizontalText">
-                    <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
-                      <h4><Glyphicon glyph="user" /></h4>
-                    </Col>
-                    <Col xs={7}>
-                      <FormControl name="username" type="text" placeholder="input your username" value={username} onChange={this.handleChange} />
-                    </Col>
-                  </FormGroup>
-                  <FormGroup controlId="formHorizontalPassword">
-                    <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
-                      <h4><Glyphicon glyph="eye-close" /></h4>
-                    </Col>
-                    <Col xs={7}>
-                      <FormControl name="password" type="password" placeholder="input your password" value={password} onChange={this.handleChange} />
-                    </Col>
-                  </FormGroup>
-                  <FormGroup controlId="formHorizontalPassword">
-                    <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
-                      <h4><Glyphicon glyph="log-in" /></h4>
-                    </Col>
-                    <Col xs={7}>
-                      <FormControl name="roomId" type="text" placeholder="input classroom ID" value={roomId} onChange={this.handleChange} />
-                    </Col>
-                  </FormGroup>
-                  <FormGroup>
-                  <Col xsOffset={2} xs={7}>
-                  <Button type="submit" bsStyle="primary" onClick={this.handleClick}>Enter Now</Button>
-                  </Col>
-                  </FormGroup>
-              </Form>
-        );
+      const userid = this.state.userid;
+      const password = this.state.password;
+      //const roomId = this.state.roomId;
+
+      switch (this.state.currentPage) {
+        case 'index_login':
+          renderDOM = <Login userid={userid} password={password} handleChange={this.handleChange} handleClick={this.handleClick} />
+          break;
+        case 'teacher_create_question':
+          console.log("teacher_create_question");
+          renderDOM = <TeacherCreateQuestion userid={userid} onTCQuestionChange={this.handleTCQuestionChange}/>
+          break;
+        case 'student_enter_question':
+          break;
+        default:
+          renderDOM = <Login userid={userid} password={password} handleChange={this.handleChange} handleClick={this.handleClick} />
       }
       return (<div>{renderDOM}</div>);
   }

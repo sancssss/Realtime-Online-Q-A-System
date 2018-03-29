@@ -47,10 +47,24 @@ class User(db.Model):
         return unicode(self.user_number)
 
 class AuthAssignment(db.Model):
+    ###user role db###
     __tablename__ = 'auth_assignment'
-    item_name = db.Column(db.Integer, nullable=True)
+    item_name = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, primary_key = True ,nullable=False)
-    create_at = db.Column(db.Integer, nullable=True)
+    created_at = db.Column(db.Integer, nullable=False)
 
-    ##def __repr__(self):
-        #return unicode(self.name).encode('utf-8')
+class QuestionQuick(db.Model):
+    __tablename__ = 'question_quick'
+    question_id = db.Column(db.Integer, primary_key = True, nullable=False)
+    user_number = db.Column(db.Integer, nullable=False)
+    question_content = db.Column(db.String(255), nullable=False)
+    question_answer = db.Column(db.String(255), nullable=False)
+    create_time = db.Column(db.Integer ,nullable=False)
+    end_time = db.Column(db.Integer, nullable=False)
+
+class StudentAnswerRecord(db.Model):
+    __tablename__ = 'student_answer_record'
+    user_number = db.Column(db.Integer, primary_key = True, nullable=False)
+    question_id = db.Column(db.Integer, primary_key = True, nullable=False)
+    is_correct = db.Column(db.Integer ,nullable=False)
+    answer_time = db.Column(db.Integer, nullable=False)

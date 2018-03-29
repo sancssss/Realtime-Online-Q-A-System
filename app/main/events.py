@@ -1,9 +1,8 @@
 from flask import session
 from flask_socketio import emit, join_room, leave_room
 import logging
-from flask_socketio import SocketIO
+from .. import socketio
 
-socketio = SocketIO()
 
 @socketio.on('joined', namespace='/class')
 def handle_joined(message, roomId):

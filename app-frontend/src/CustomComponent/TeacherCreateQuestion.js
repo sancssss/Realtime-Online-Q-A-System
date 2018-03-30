@@ -9,7 +9,6 @@ export default class TeacherCreateQuestion extends Component {
       questionText: '',
       minuteText: '3',
       answerValue: [],
-      setCurrentPageHandle: this.props.currentPage
     }
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleMinuteChange = this.handleMinuteChange.bind(this);
@@ -73,10 +72,13 @@ export default class TeacherCreateQuestion extends Component {
     }).then(
       function(json) {
         console.log("obj.json:" + json.isOk);
+        console.log("obj.json:" + json.room_id);
         //isOK == 1 mean login data is vaild
         if(json.isOk === '1') {
           return {
             result: true,
+            roomId: json.room_id,
+            endTime: json.end_time
           };
         }else {
           console.log("error by inpput data");
@@ -99,20 +101,17 @@ export default class TeacherCreateQuestion extends Component {
     console.log("handkA start");
     this.createQuestion().then(
       //use "=>" do not create a new this and this.setState issue solved
-      (isVaild) => {
-      if(isVaild.result === true) {
-        console.log("handleSubmitsuccessful:" + isVaild.result);
-        this.props.onTCQuestionChange('quick_question_room');
+      (data) => {
+      if(data.result === true) {
+        console.log("handleSubmitsuccessful:" + data.result);
+        let joinObj = {roomid: data.roomId};
+        this.props.socketio.emit('joined', joinObj, String(data.roomId));
+        this.props.onTCQuestionChange('teacher_question_room', data.roomId, this.state.questionText,this.state.answerValue ,data.endTime);
       } else {
-        console.log("handleSubmitfailed:" + isVaild.result);
+        console.log("handleSubmitfailed:" + data.result);
         this.props.onTCQuestionChange('teacher_create_question');
       }
-        /*
-        let loginObj = {uid: uid, userid: userid};
-        this.socket.emit('joined', loginObj, roomId);
-        return true;
-        */
-      }
+    }
     );
     event.preventDefault();
     this.props.onTCQuestionChange('teacher_create_question');
@@ -125,7 +124,7 @@ export default class TeacherCreateQuestion extends Component {
       <Form horizontal>
           <FormGroup>
             <Col xs={8} xsOffset={1}>
-          <h4>{this.props.userid} | Quick Assignment</h4>
+          <h5>{this.props.userid} | Quick Assignment</h5>
             </Col>
           </FormGroup>
           <FormGroup>

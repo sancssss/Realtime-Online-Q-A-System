@@ -24,9 +24,10 @@ def handle_text(message, roomId):
 
 
 @socketio.on('left', namespace='/class')
-def handle_left(message, namesapce='/class'):
+def handle_left(message, roomId):
     """Sent by clients when they leave a room.
     A status message is broadcast to all people in the room."""
-    room = 1
-    leave_room(1)
-    emit('left', {'msg': session.get('name') + ' has left the room.'})
+    room = roomId
+    print("===someone left===roomId:" + room)
+    leave_room(room)
+    emit('left', message, namespace='/class', room=room)

@@ -11,18 +11,7 @@ api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        testval = QuestionQuick.query.filter_by(user_number=123456).first().question_content
-        data = request.get_json()
-        request_userid = 123456
-        request_question_text = '3'
-        request_answer_value = '3'
-        request_minute_text = 3
-        request_create_time = time.time()
-        request_end_time = time.time() + int(request_minute_text) * 60
-        ###heck user Validity by session or flask_login
-        #print("login_log" + request.get_json()['username']);
-        new_quickquestion = QuestionQuick()
-        return {'just': json.dumps(new_quickquestion.__dict__)}
+        return {'just': "hello"}
 
 api.add_resource(HelloWorld, '/')
 
@@ -57,6 +46,16 @@ class QuickQuestion(Resource):
         new_quickquestion = QuestionQuick(user_number=request_userid, question_content=request_question_text, question_answer=request_answer_value, create_time=request_create_time, end_time=request_end_time)
         db.session.add(new_quickquestion)
         db.session.commit()
-        return {'isOk': '1'}
+        #get the latest record to get the roomid
+        roomId = QuestionQuick.query.filter_by(user_number=request_userid).order_by("create_time desc").first().question_id
+        print("room ID", roomId)
+        endTime = QuestionQuick.query.filter_by(question_id=roomId).first().end_time
+        return {'isOk': '1', 'room_id': roomId, 'end_time':endTime }
 
-api.add_resource(QuickQuestion, '/QuickQuestion')
+    def get(self, id):
+        request_question = QuestionQuick().query.filter_by(question_id=id).first()
+        if(request_question):
+            return {'isOk': '1', 'create_user': request_question.user_number, 'question_content': request_question.question_content, 'create_time': request_question.create_time, 'end_time': request_question.end_time}
+        return {'isOk': 0}
+
+api.add_resource(QuickQuestion, '/QuickQuestion', '/QuickQuestion/<int:id>')

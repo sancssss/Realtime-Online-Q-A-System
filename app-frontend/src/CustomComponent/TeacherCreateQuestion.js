@@ -3,6 +3,8 @@ import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon, Tog
 import fetch from 'isomorphic-fetch';
 
 export default class TeacherCreateQuestion extends Component {
+  location = 'http://localhost:5000/';
+  //location = 'http://os.ply18.space/';
   constructor(props) {
     super(props);
     this.state = {
@@ -51,7 +53,8 @@ export default class TeacherCreateQuestion extends Component {
     const answerValue = this.state.answerValue;
     const minuteText = this.state.minuteText;
     //console.log("answerValue" + answerValue);
-    const uri = 'http://localhost:5000/QuickQuestion';
+    const location = this.location + 'QuickQuestion';
+    const uri = location;
     const data = {
       "userid": userid,
       "questionText": questionText,

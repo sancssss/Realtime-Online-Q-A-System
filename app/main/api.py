@@ -11,7 +11,8 @@ api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        return {'just': "hello"}
+        db_user = User.query.filter_by(user_number=141304120).first().user_number
+        return {'just': db_user}
 
 api.add_resource(HelloWorld, '/')
 

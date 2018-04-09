@@ -3,6 +3,8 @@ import { Button, Form, FormGroup, ControlLabel, Col, Glyphicon, ToggleButtonGrou
 import fetch from 'isomorphic-fetch';
 
 export default class StudentQuestionRoom extends Component {
+  location = 'http://localhost:5000/';
+  //location = 'http://os.ply18.space/';
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -17,8 +19,7 @@ export default class StudentQuestionRoom extends Component {
 
   getQuestion() {
     const userid = this.state.roomId;
-    //console.log("answerValue" + answerValue);
-    const uri = 'http://localhost:5000/QuickQuestion/' + userid;
+    const uri = this.location + 'QuickQuestion/' + String(userid);
     return fetch(uri, {
       method: "GET",
       headers: {

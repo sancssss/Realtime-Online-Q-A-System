@@ -1,23 +1,18 @@
-import { LOGIN_TEACHER, LOGIN_STUDENT, STUDENT_SUBMIT_ROOM, TEACHER_CREATE_ROOM, CHANGE_LOGIN_FORM } from '../Constants/ActionTypes';
+import { CHANGE_CURRENT_PAGE, LOGIN_USER, STUDENT_JOIN_ROOM, TEACHER_CREATE_ROOM} from '../Constants/ActionTypes';
 
 //Object loginData
-export function loginTeacher(loginData) {
-  return {type: LOGIN_TEACHER, loginData: loginData};
+export function loginUser(loginData) {
+  return {type: LOGIN_USER, loginData};
 }
-//Object loginData
-export function loginStudent(loginData) {
-  return {type: LOGIN_STUDENT, loginData: loginData};
+//String currentPage
+export function changeCurrentPage(pageName) {
+  return {type: CHANGE_CURRENT_PAGE, pageName}
 }
 //Object roomData
-export function studentSubmitRoom(roomData) {
-  return {type: STUDENT_SUBMIT_ROOM, roomData};
+export function studentJoinRoom(roomData) {
+  return {type: STUDENT_JOIN_ROOM, roomData};
 }
 //Object roomData
 export function teacherCreateRoom(roomData) {
   return {type: TEACHER_CREATE_ROOM, roomData};
-}
-
-//Object loginData
-export function handleLoginFormChange(loginData) {
-  return {type: CHANGE_LOGIN_FORM, loginData};
 }

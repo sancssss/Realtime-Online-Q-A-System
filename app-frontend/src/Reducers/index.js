@@ -1,69 +1,84 @@
-import { LOGIN_TEACHER, LOGIN_STUDENT, STUDENT_SUBMIT_ROOM, TEACHER_CREATE_ROOM, CHANGE_LOGIN_FORM } from '../Constants/ActionTypes';
+import { LOGIN_USER, STUDENT_JOIN_ROOM, TEACHER_CREATE_ROOM, CHANGE_CURRENT_PAGE } from '../Constants/ActionTypes';
 import { combineReducers } from 'redux';
+
+const inintalPageChangeState = {
+  pageName: 'index_login'
+}
 
 const initialLoginState = {
   userid: '',
   password: '',
-  currentPage: 'index_login',
 };
 
-const initialOtherState ={
-  studentJoinRoomId: '',
-  studentQuestionTime: '',
-  studentQuestionText: '',
+const initialTeacherState = {
   teacherCreateRoomId: '',
   teacherQuestionTime: '',
   teacherQuestionText: '',
   teacherQuestionAnswer: ''
-}
+};
 
-const rootReducer = (state=initialLoginState, action) => {
+const initialStudentState = {
+  studentJoinRoomId: '',
+  studentQuestionTime: '',
+  studentQuestionText: '',
+};
+
+const loginReducer = (state=initialLoginState, action) => {
   switch(action.type) {
-    case LOGIN_STUDENT:
+    case LOGIN_USER:
       return Object.assign({}, state, {
         userid: action.loginData.userid,
         password: action.loginData.password,
-        currentPage: 'student_join_question'
-      });
-    case LOGIN_TEACHER:
-      console.log("LOGIN_TEACHER+"+ state.currentPage)
-      return Object.assign({}, state, {
-        userid: action.loginData.userid,
-        password: action.loginData.password,
-        currentPage: 'teacher_create_question'
       });
     default:
-      return {
-        ...state
-      }
+      return state;
   }
 }
 
-const otherReducer = (state=initialOtherState, action) => {
+const pageChangeReducer = (state=inintalPageChangeState, action) => {
+  switch(action.type) {
+    case CHANGE_CURRENT_PAGE:
+    return Object.assign({}, state, {
+      currentPage: action.pageName
+    });
+    default:
+      return state;
+  }
+}
+
+const teacherRoomReducer = (state=initialTeacherState, action) => {
   switch (action.type) {
-    case STUDENT_SUBMIT_ROOM:
-      return Object.assign({}, state, {
-        studentJoinRoomId: action.roomData.studentJoinRoomId,
-        studentQuestionTime: action.roomData.studentQuestionTime,
-        studentQuestionText: action.roomData.studentQuestionText,
-        currentPage: 'student_question_room'//// TODO: use react-router to change page
-      });
     case TEACHER_CREATE_ROOM:
+      console.log('action.roomData.teacherJoinRoomId '+ action.roomData.teacherJoinRoomId)
       return Object.assign({}, state, {
-        teacherCreateRoomId: action.roomData.studentJoinRoomId,
-        teacherQuestionTime: action.roomData.studentQuestionTime,
-        teacherQuestionText: action.roomData.studentQuestionText,
-        teacherQuestionAnswer: action.roomData.stduentQuestionAnswer,
-        currentPage: 'teacher_question_room'//// TODO: use react-router to change page
+        teacherCreateRoomId: action.roomData.teacherCreateRoomId,
+        teacherQuestionTime: action.roomData.teacherQuestionTime,
+        teacherQuestionText: action.roomData.teacherQuestionText,
+        teacherQuestionAnswer: action.roomData.teacherQuestionAnswer,
       });
     default:
       return state;
   }
 };
-/*
+
+const studentRoomReducer = (state=initialStudentState, action) => {
+  switch (action.type) {
+    case STUDENT_JOIN_ROOM:
+      return Object.assign({}, state, {
+        studentJoinRoomId: action.roomData.studentJoinRoomId,
+        studentQuestionTime: action.roomData.studentQuestionTime,
+        studentQuestionText: action.roomData.studentQuestionText,
+      });
+    default:
+      return state;
+  }
+};
+
 const rootReducer = combineReducers({
   loginReducer,
-  otherReducer
+  pageChangeReducer,
+  teacherRoomReducer,
+  studentRoomReducer
 });
-*/
+
 export default rootReducer;

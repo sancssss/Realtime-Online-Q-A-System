@@ -1,8 +1,24 @@
 import React, {Component} from 'react';
 import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon, ToggleButtonGroup, ToggleButton} from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
+import { connect } from 'react-redux';
+import { teacherCreateRoom, changeCurrentPage } from '../Actions';
 
-export default class TeacherCreateQuestion extends Component {
+const mapStateToProps = (state, ownProps) => {
+  return {
+    userid: state.loginReducer.userid
+  }
+};
+
+//RoomData:{roomId, questionText, answerValue ,endTime}
+const mapDispatchProps = (dispatch) => {
+  return {
+    teacherCreateRoom: roomData => dispatch(teacherCreateRoom(roomData)),
+    changeCurrentPage: pageName => dispatch(changeCurrentPage(pageName))
+  }
+}
+
+class TeacherCreateQuestionView extends Component {
   location = 'http://localhost:5000/';
   //location = 'http://os.ply18.space/';
   constructor(props) {
@@ -52,7 +68,6 @@ export default class TeacherCreateQuestion extends Component {
     const questionText = this.state.questionText;
     const answerValue = this.state.answerValue;
     const minuteText = this.state.minuteText;
-    //console.log("answerValue" + answerValue);
     const location = this.location + 'QuickQuestion';
     const uri = location;
     const data = {
@@ -70,18 +85,15 @@ export default class TeacherCreateQuestion extends Component {
       credentials: "same-origin"
     }).then(
       function(response) {
-        //console.log("response:" + response.json());
         return response.json();
     }).then(
       function(json) {
-        console.log("obj.json:" + json.isOk);
-        console.log("obj.json:" + json.room_id);
         //isOK == 1 mean login data is vaild
         if(json.isOk === '1') {
           return {
             result: true,
-            roomId: json.room_id,
-            endTime: json.end_time
+            roomId: json.room_id,//server return a new room id
+            endTime: json.end_time//server caculate the end time return to the client
           };
         }else {
           console.log("error by inpput data");
@@ -101,33 +113,43 @@ export default class TeacherCreateQuestion extends Component {
   }
 
   handleSubmit(event) {
-    console.log("handkA start");
     this.createQuestion().then(
       //use "=>" do not create a new this and this.setState issue solved
       (data) => {
       if(data.result === true) {
-        console.log("handleSubmitsuccessful:" + data.result);
+        //console.log("handleSubmitsuccessful:" + data.result);
         let joinObj = {roomid: data.roomId};
-        this.props.socketio.emit('joined', joinObj, String(data.roomId));
-        this.props.onTCQuestionChange('teacher_question_room', data.roomId, this.state.questionText,this.state.answerValue ,data.endTime);
+        let roomData = {
+          teacherCreateRoomId: data.roomId,
+          teacherQuestionTime: this.state.minuteText,// TODO: should use endTime return by server
+          teacherQuestionText: this.state.questionText,
+          teacherQuestionAnswer: this.state.answerValue
+        }
+        this.props.socketio.emit('joined', joinObj, String(data.roomId));//second argument for socketio message, third argument for socketio 'room'
+        this.props.teacherCreateRoom(roomData);
+        this.props.changeCurrentPage('teacher_question_room');
       } else {
         console.log("handleSubmitfailed:" + data.result);
-        this.props.onTCQuestionChange('teacher_create_question');
+        this.props.changeCurrentPage('teacher_create_question');
       }
     }
     );
     event.preventDefault();
-    this.props.onTCQuestionChange('teacher_create_question');
+    this.props.changeCurrentPage('teacher_create_question');
   }
 
   render() {
-    let questionText = this.state.questionText;
-    let minuteText = this.state.minuteText;
+    const questionText = this.state.questionText;
+    const minuteText = this.state.minuteText;
+    const userid = this.props.userid;
+    const answerValue = this.answerValue;
+    const handleAnswerChange = this.handleAnswerChange;
+    const handleSubmit = this.handleSubmit;
     return (
       <Form horizontal>
           <FormGroup>
             <Col xs={8} xsOffset={1}>
-          <h5>{this.props.userid} | Quick Assignment</h5>
+          <h5>{userid} | Quick Assignment</h5>
             </Col>
           </FormGroup>
           <FormGroup>
@@ -153,7 +175,7 @@ export default class TeacherCreateQuestion extends Component {
               <h4><Glyphicon glyph="ok" /></h4>
             </Col>
             <Col xs={7}>
-              <ToggleButtonGroupControlled onChange={this.handleAnswerChange} value={this.answerValue}/>
+              <ToggleButtonGroupControlled onChange={handleAnswerChange} value={answerValue}/>
             </Col>
           </FormGroup>
           <FormGroup>
@@ -174,7 +196,7 @@ export default class TeacherCreateQuestion extends Component {
           </FormGroup>
           <FormGroup>
           <Col xsOffset={2} xs={7}>
-          <Button type="submit" bsStyle="primary" onClick={this.handleSubmit}>Create now</Button>
+          <Button type="submit" bsStyle="primary" onClick={handleSubmit}>Create now</Button>
           </Col>
           </FormGroup>
       </Form>
@@ -198,3 +220,10 @@ class ToggleButtonGroupControlled extends React.Component {
     );
   }
 }
+
+const TeacherCreateQuestion = connect(
+  mapStateToProps,
+  mapDispatchProps
+)(TeacherCreateQuestionView);
+
+export default TeacherCreateQuestion;

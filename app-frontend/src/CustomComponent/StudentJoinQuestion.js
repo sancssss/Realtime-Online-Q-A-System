@@ -1,8 +1,26 @@
 import React, {Component} from 'react';
 import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon, ToggleButtonGroup, ToggleButton} from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
+import { connect } from 'react-redux';
+import { changeCurrentPage, studentJoinRoom } from '../Actions';
 
-export default class StudentJoinQuestion extends Component {
+const mapStateToProps = (state, ownProps) => {
+  return {
+    userid: state.loginReducer.userid,
+    roomId: state.studentRoomReducer.studentJoinRoomId,
+    questionText: state.studentRoomReducer.studentQuestionText,
+    questionTime: state.studentRoomReducer.studentQuestionTime
+  }
+};
+
+const mapDispatchProps = (dispatch) => {
+  return {
+    studentJoinRoom: roomData => dispatch(studentJoinRoom(roomData)),
+    changeCurrentPage: pageName => dispatch(changeCurrentPage(pageName))
+  }
+}
+
+class StudentJoinQuestionView extends Component {
   location = 'http://localhost:5000/';
   //location = 'http://os.ply18.space/';
   constructor(props) {
@@ -46,10 +64,10 @@ export default class StudentJoinQuestion extends Component {
         if(json.isOk === '1') {
           return {
             result: true,
-            create_user: json.create_user,
-            create_time: json.create_time,
-            question_content: json.question_content,
-            end_time: json.end_time
+            createUser: json.create_user,
+            createTime: json.create_time,
+            questionText: json.question_content,
+            endTime: json.end_time
           };
         }else {
           console.log("error by input data");
@@ -69,21 +87,25 @@ export default class StudentJoinQuestion extends Component {
   }
 
   handleSubmit(event) {
-    console.log("handkA start");
     this.getQuestion().then(
       //use "=>" do not create a new this and this.setState issue solved
       (data) => {
       if(data.result === true) {
-        console.log("handleSubmitsuccessful:" + data.question_content);
+        console.log("handleSubmitsuccessful");
         let joinOjb = {userid: this.props.userid};
-        this.props.onSJQuestionChange('student_question_room', this.state.roomId, data.question_content, data.end_time);
+        let roomData = {
+          studentJoinRoomId: this.state.roomId,
+          studentQuestionTime: data.endTime,
+          studentQuestionText: data.questionText,
+        };
+        this.props.studentJoinRoom(roomData);
         this.props.socketio.emit('joined', joinOjb, this.state.roomId);
-        //pass props to parent component and refresh page
+        this.props.changeCurrentPage('student_question_room');
         event.preventDefault();
       } else {
         console.log("handleSubmitfailed:" + data.result);
         event.preventDefault();
-        //this.props.onTCQuestionChange('teacher_create_question');
+        this.props.changeCurrentPage('student_join_question');
       }
     }
     );
@@ -93,11 +115,14 @@ export default class StudentJoinQuestion extends Component {
 
   render() {
     const roomId = this.state.roomId;
+    const userid = this.props.userid;
+    const handleSubmit = this.handleSubmit;
+    const handleTextChange = this.handleTextChange;
     return (
       <Form horizontal>
           <FormGroup>
             <Col xs={8} xsOffset={1}>
-          <h4>{this.props.userid} | Quick Assignment</h4>
+          <h4>{userid} | Quick Assignment</h4>
             </Col>
           </FormGroup>
           <FormGroup>
@@ -110,15 +135,22 @@ export default class StudentJoinQuestion extends Component {
               <h4><Glyphicon glyph="pencil" /></h4>
             </Col>
             <Col xs={7}>
-              <FormControl name="roomId" type="text" placeholder="Room ID" value={roomId} onChange={this.handleTextChange} />
+              <FormControl name="roomId" type="text" placeholder="Room ID" value={roomId} onChange={handleTextChange} />
             </Col>
           </FormGroup>
           <FormGroup>
           <Col xsOffset={2} xs={7}>
-          <Button type="submit" bsStyle="primary" onClick={this.handleSubmit}>Join Now</Button>
+          <Button type="submit" bsStyle="primary" onClick={handleSubmit}>Join Now</Button>
           </Col>
           </FormGroup>
       </Form>
     );
   }
 }
+
+const StudentJoinQuestion = connect(
+  mapStateToProps,
+  mapDispatchProps
+)(StudentJoinQuestionView);
+
+export default StudentJoinQuestion;

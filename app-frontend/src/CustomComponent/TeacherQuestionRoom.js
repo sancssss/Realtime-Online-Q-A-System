@@ -1,14 +1,26 @@
 import React, {Component} from 'react';
 import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon, ToggleButtonGroup, ToggleButton, Well, ProgressBar} from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
+import { connect } from 'react-redux';
+import { changeCurrentPage } from '../Actions';
 
-export default class TeacherQuestionRoom extends Component {
+const mapStateToProps = (state, ownProps) => {
+  return {
+    userid: state.loginReducer.userid,
+    questionText: state.teacherRoomReducer.teacherQuestionText,
+    questionAnswer: state.teacherRoomReducer.teacherQuestionAnswer,
+    minuteText: state.teacherRoomReducer.teacherQuestionTime,
+    roomId: state.teacherRoomReducer.teacherCreateRoomId,
+  }
+};
+
+class TeacherQuestionRoomView extends Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updateAnswerCount = this.updateAnswerCount.bind(this);
     this.state = {
-      timeRemain: '3*60',
+      timeRemain: this.props.minuteText,// TODO: change to endTime
       submitAnswerCount: '0',//count all student submits
       correctAnswerCount: '0',
     }
@@ -17,7 +29,7 @@ export default class TeacherQuestionRoom extends Component {
 
 
   handleSubmit(event) {
-    console.log("handkA start");
+    //console.log("handkA start");
     this.getQuestion().then(
       //use "=>" do not create a new this and this.setState issue solved
     (data) => {
@@ -39,11 +51,12 @@ export default class TeacherQuestionRoom extends Component {
 
   updateAnswerCount(obj) {
     const correctAnswer = this.props.questionAnswer;
-    console.log("someones answer is" + obj.answer[0]);
-    console.log("correctAnswer is" + correctAnswer);
+    //console.log("someones answer is" + obj.answer[0]);
+    //console.log("correctAnswer is" + correctAnswer);
     const submitAnswerCount = Number(this.state.submitAnswerCount) + 1;
     const correctAnswerCount = Number(this.state.correctAnswerCount) + 1;
     if(String(correctAnswer) === String(obj.answer[0])) {
+      console.log("someone answer is right")
       this.setState({
         'correctAnswerCount': correctAnswerCount,
         'submitAnswerCount': submitAnswerCount
@@ -73,8 +86,7 @@ export default class TeacherQuestionRoom extends Component {
 
     //client monitor send msg
     socket.on('text', (obj) => {
-      console.log("===text===");
-      console.log('recived object'+  JSON.stringify(obj));
+      console.log('recived object in teacher room'+  JSON.stringify(obj));
       this.updateAnswerCount(obj);
     })
   }
@@ -84,18 +96,18 @@ export default class TeacherQuestionRoom extends Component {
     const questionAnswer = this.props.questionAnswer;
     const minuteText = this.props.endTime;
     const userid = this.props.userid;
-    const roomid = this.props.roomId;
+    const roomId = this.props.roomId;
+    
     const correctSubmit = this.state.correctAnswerCount;
-    console.log("correctSubmit: "+correctSubmit);
     const totalSubmit = this.state.submitAnswerCount;
-    const rate = (totalSubmit === 0 ? 0 : (correctSubmit / totalSubmit).toFixed(1) * 100);
+    const rate = (totalSubmit === 0 ? 0 : (correctSubmit / totalSubmit).toFixed(2) * 100);
     const progressInstance =  <ProgressBar active now={rate} label={`${rate}% (${correctSubmit}/${totalSubmit})`} />;
 
     return (
       <Form horizontal>
           <FormGroup>
             <Col xs={8} xsOffset={1}>
-          <h4>{userid} | Room ID: {roomid}</h4>
+          <h4>{userid} | Room ID: {roomId}</h4>
             </Col>
           </FormGroup>
           <FormGroup>
@@ -139,7 +151,7 @@ export default class TeacherQuestionRoom extends Component {
           <FormGroup>
             <Col xs={8} xsOffset={1}>
               <Well bsSize="small">
-                <h4>{this.state.timeRemain} minute(s)</h4>
+                <h4>{minuteText} minute(s)</h4>
               </Well>
             </Col>
           </FormGroup>
@@ -165,3 +177,10 @@ export default class TeacherQuestionRoom extends Component {
     );
   }
 }
+
+const TeacherQuestionRoom = connect(
+  mapStateToProps,
+  null
+)(TeacherQuestionRoomView);
+
+export default TeacherQuestionRoom;

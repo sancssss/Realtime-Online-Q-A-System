@@ -1,21 +1,21 @@
 import React, {Component} from 'react';
 import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon } from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
-import {connect} from 'react-redux';
-import {loginStudent, loginTeacher} from '../Actions';
+import { connect } from 'react-redux';
+import { loginUser, changeCurrentPage } from '../Actions';
 
-const mapStateToProps = (state, ownProps) => {
-  console.log("login_mapStateToProps+"+state.currentPage+" userid+"+state.userid)
+const mapStateToProps = (state) => {
   return {
-    userid: state.userid,
-    password: state.password,
+    userid: state.loginReducer.userid,
+    password: state.loginReducer.password,
   }
 };
 
+//loginData:{userid, password, role}
 const mapDispatchProps = (dispatch) => {
   return {
-    submitTeacher: loginData => dispatch(loginTeacher(loginData)),
-    submitStudent: loginData => dispatch(loginStudent(loginData)),
+    loginUser: loginData => dispatch(loginUser(loginData)),
+    changeCurrentPage: pageName=> dispatch(changeCurrentPage(pageName))
   }
 }
 
@@ -98,12 +98,9 @@ class LoginView extends Component {
         //use "=>" do not create a new this and this.setState issue solved
         (isVaild) => {
         if(isVaild.result === true) {
-          if(isVaild.role === 'teacher') {
-            this.props.submitTeacher({userid, password});
-          }
-          if(isVaild.role === 'student') {
-            this.props.submitStudent({userid, password});
-          }
+          this.props.loginUser({userid, password});
+          let pageName = isVaild.role === 'student' ? 'student_join_question' : 'teacher_create_question';
+          this.props.changeCurrentPage(pageName);
         }
       }
     );

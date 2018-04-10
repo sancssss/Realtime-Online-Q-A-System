@@ -1,8 +1,19 @@
 import React, {Component} from 'react';
 import { Button, Form, FormGroup, ControlLabel, Col, Glyphicon, ToggleButtonGroup, ToggleButton, Well} from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
+import { connect } from 'react-redux';
+import { changeCurrentPage } from '../Actions';
 
-export default class StudentQuestionRoom extends Component {
+const mapStateToProps = (state, ownProps) => {
+  return {
+    userid: state.loginReducer.userid,
+    questionText: state.studentRoomReducer.studentQuestionText,
+    minuteText: state.studentRoomReducer.studentQuestionTime,
+    roomId: state.studentRoomReducer.studentJoinRoomId,
+  }
+};
+
+class StudentQuestionRoomView extends Component {
   location = 'http://localhost:5000/';
   //location = 'http://os.ply18.space/';
   constructor(props) {
@@ -85,9 +96,12 @@ export default class StudentQuestionRoom extends Component {
 
   render() {
     const questionText = this.props.questionText;
-    const minuteText = this.props.endTime;
+    const minuteText = this.props.minuteText;
     const userid = this.props.userid;
     const roomid = this.props.roomId;
+    const answerValue = this.state.answerValue
+    const handleAnswerChange = this.handleAnswerChange;
+    const handleSubmit = this.handleSubmit;
 
     return (
       <Form horizontal>
@@ -121,7 +135,7 @@ export default class StudentQuestionRoom extends Component {
           </FormGroup>
           <FormGroup controlId="formHorizontalText">
             <Col xs={8} xsOffset={1}>
-              <ToggleButtonGroupControlled onChange={this.handleAnswerChange} value={this.answerValue}/>
+              <ToggleButtonGroupControlled onChange={handleAnswerChange} value={answerValue}/>
             </Col>
           </FormGroup>
           <FormGroup>
@@ -135,13 +149,13 @@ export default class StudentQuestionRoom extends Component {
           <FormGroup>
             <Col xs={8} xsOffset={1}>
               <Well bsSize="small">
-                <h4>{this.state.timeRemain} minute(s)</h4>
+                <h4>{minuteText} minute(s)</h4>
               </Well>
             </Col>
           </FormGroup>
           <FormGroup>
           <Col xsOffset={2} xs={8}>
-          <Button type="submit" bsStyle="success" onClick={this.handleSubmit}>Submit Answer</Button>
+          <Button type="submit" bsStyle="success" onClick={handleSubmit}>Submit Answer</Button>
           </Col>
           </FormGroup>
       </Form>
@@ -165,3 +179,9 @@ class ToggleButtonGroupControlled extends React.Component {
     );
   }
 }
+const StudentQuestionRoom = connect(
+  mapStateToProps,
+  null
+)(StudentQuestionRoomView);
+
+export default StudentQuestionRoom;

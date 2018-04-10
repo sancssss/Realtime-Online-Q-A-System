@@ -3,6 +3,9 @@ import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon, Tog
 import fetch from 'isomorphic-fetch';
 import { connect } from 'react-redux';
 import { changeCurrentPage, studentJoinRoom } from '../Actions';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import Chip from 'material-ui/Chip';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -121,8 +124,8 @@ class StudentJoinQuestionView extends Component {
     return (
       <Form horizontal>
           <FormGroup>
-            <Col xs={8} xsOffset={1}>
-          <h4>{userid} | Quick Assignment</h4>
+            <Col xs={8} xsOffset={0}>
+              <Chip>Student User: {userid}</Chip>
             </Col>
           </FormGroup>
           <FormGroup>
@@ -135,12 +138,12 @@ class StudentJoinQuestionView extends Component {
               <h4><Glyphicon glyph="pencil" /></h4>
             </Col>
             <Col xs={7}>
-              <FormControl name="roomId" type="text" placeholder="Room ID" value={roomId} onChange={handleTextChange} />
+              <TextField name="roomId" hintText="Room ID" value={roomId} onChange={handleTextChange}/>
             </Col>
           </FormGroup>
           <FormGroup>
           <Col xsOffset={2} xs={7}>
-          <Button type="submit" bsStyle="primary" onClick={handleSubmit}>Join Now</Button>
+          <RaisedButton type="submit" primary={true} onClick={handleSubmit} label="Join"/>
           </Col>
           </FormGroup>
       </Form>

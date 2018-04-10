@@ -3,6 +3,10 @@ import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon, Tog
 import fetch from 'isomorphic-fetch';
 import { connect } from 'react-redux';
 import { changeCurrentPage } from '../Actions';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import Chip from 'material-ui/Chip';
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -97,7 +101,7 @@ class TeacherQuestionRoomView extends Component {
     const minuteText = this.props.endTime;
     const userid = this.props.userid;
     const roomId = this.props.roomId;
-    
+
     const correctSubmit = this.state.correctAnswerCount;
     const totalSubmit = this.state.submitAnswerCount;
     const rate = (totalSubmit === 0 ? 0 : (correctSubmit / totalSubmit).toFixed(2) * 100);
@@ -106,55 +110,45 @@ class TeacherQuestionRoomView extends Component {
     return (
       <Form horizontal>
           <FormGroup>
-            <Col xs={8} xsOffset={1}>
-          <h4>{userid} | Room ID: {roomId}</h4>
+            <Col xs={8} xsOffset={0}>
+              <Chip>Room ID: {roomId}</Chip>
             </Col>
           </FormGroup>
-          <FormGroup>
-          <Col xs={1} xsOffset={1}>
-            <h4><Glyphicon glyph="question-sign" /></h4>
-          </Col>
-          <Col xs={5}>
-              <h5>Question:</h5>
-          </Col>
-          </FormGroup>
-          <FormGroup>
-          <Col xs={8} xsOffset={1}>
-            <Well>
-              {questionText}
-            </Well>
-          </Col>
-          </FormGroup>
-          <FormGroup>
-          <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
-            <h4><Glyphicon glyph="ok" /></h4>
-          </Col>
-          <Col xs={5}>
-              <h5>Correct Answer:</h5>
-          </Col>
-          </FormGroup>
-          <FormGroup>
-          <Col xs={8} xsOffset={1}>
-            <Well>
-              {questionAnswer}
-            </Well>
-          </Col>
-          </FormGroup>
-          <FormGroup>
-          <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
-            <h4><Glyphicon glyph="time" /></h4>
-          </Col>
-          <Col xs={5}>
-              <h5>Time Remain:</h5>
-          </Col>
-          </FormGroup>
-          <FormGroup>
+          <Card>
+            <CardText>
+            <FormGroup>
+            <Col xs={1} xsOffset={1}>
+              <h4><Glyphicon glyph="question-sign" /></h4>
+            </Col>
+            <Col xs={5}>
+                <h5>Question:</h5>
+            </Col>
+            </FormGroup>
+            <FormGroup>
             <Col xs={8} xsOffset={1}>
-              <Well bsSize="small">
-                <h4>{minuteText} minute(s)</h4>
+              <Well>
+                {questionText}
               </Well>
             </Col>
-          </FormGroup>
+            </FormGroup>
+            <FormGroup>
+            <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
+              <h4><Glyphicon glyph="ok" /></h4>
+            </Col>
+            <Col xs={8}>
+                <h5>Correct Answer: {questionAnswer}</h5>
+            </Col>
+            </FormGroup>
+            <FormGroup>
+            <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
+              <h4><Glyphicon glyph="time" /></h4>
+            </Col>
+            <Col xs={8}>
+                <h5>Time Remain: {minuteText} S</h5>
+            </Col>
+            </FormGroup>
+          </CardText>
+          </Card>
           <FormGroup>
           <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
             <h4><Glyphicon glyph="time" /></h4>
@@ -169,8 +163,8 @@ class TeacherQuestionRoomView extends Component {
             </Col>
           </FormGroup>
           <FormGroup>
-          <Col xsOffset={2} xs={8}>
-          <Button type="submit" bsStyle="warning" onClick={this.handleSubmit}>Close Question Now</Button>
+          <Col xsOffset={1} xs={8}>
+            <RaisedButton type="submit" secondary={true} onClick={this.handleSubmit} label="Stop"/>
           </Col>
           </FormGroup>
       </Form>

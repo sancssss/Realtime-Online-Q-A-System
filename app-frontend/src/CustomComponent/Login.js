@@ -1,21 +1,30 @@
 import React, {Component} from 'react';
-import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon } from 'react-bootstrap';
+import {
+  Button,
+  Form,
+  FormGroup,
+  FormControl,
+  ControlLabel,
+  Col,
+  Glyphicon
+} from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
-import { connect } from 'react-redux';
-import { loginUser, changeCurrentPage } from '../Actions';
+import {connect} from 'react-redux';
+import {loginUser, changeCurrentPage} from '../Actions';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import FontIcon from 'material-ui/FontIcon';
+import {red500, yellow500, blue500} from 'material-ui/styles/colors';
 
 const mapStateToProps = (state) => {
-  return {
-    userid: state.loginReducer.userid,
-    password: state.loginReducer.password,
-  }
+  return {userid: state.loginReducer.userid, password: state.loginReducer.password}
 };
 
 //loginData:{userid, password, role}
 const mapDispatchProps = (dispatch) => {
   return {
     loginUser: loginData => dispatch(loginUser(loginData)),
-    changeCurrentPage: pageName=> dispatch(changeCurrentPage(pageName))
+    changeCurrentPage: pageName => dispatch(changeCurrentPage(pageName))
   }
 }
 
@@ -36,11 +45,7 @@ class LoginView extends Component {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    this.setState(
-      {
-        [name]: value,
-      }
-    );
+    this.setState({[name]: value});
   }
 
   handleClick(event) {
@@ -61,49 +66,38 @@ class LoginView extends Component {
         "Content-Type": "application/json"
       },
       credentials: "same-origin"
-    }).then(
-      function(response) {
-        //console.log("response:" + response.json());
-        return response.json();
-    }).then(
-      function(json) {
-        console.log("obj.json:" + json.isOk);
-        //isOK == 1 mean login data is vaild
-        if(json.isOk === '1') {
-          return {
-            result: true,
-            role: json.role,
-          };
-        }else {
-          console.log("login error by login data");
-          return {
-            result: false
-          };
-        }
+    }).then(function(response) {
+      //console.log("response:" + response.json());
+      return response.json();
+    }).then(function(json) {
+      console.log("obj.json:" + json.isOk);
+      //isOK == 1 mean login data is vaild
+      if (json.isOk === '1') {
+        return {result: true, role: json.role};
+      } else {
+        console.log("login error by login data");
+        return {result: false};
       }
-    ).catch(
-      function(exception) {
-        console.log('login error by exception', exception);
-        return {
-          result: false
-        };
-      }
-    );
+    }).catch(function(exception) {
+      console.log('login error by exception', exception);
+      return {result: false};
+    });
   }
 
   handleLogin() {
     let userid = this.state.userid;
     let password = this.state.password;
     this.checkLogin(userid, password).then(
-        //use "=>" do not create a new this and this.setState issue solved
-        (isVaild) => {
-        if(isVaild.result === true) {
-          this.props.loginUser({userid, password});
-          let pageName = isVaild.role === 'student' ? 'student_join_question' : 'teacher_create_question';
-          this.props.changeCurrentPage(pageName);
-        }
+    //use "=>" do not create a new this and this.setState issue solved
+    (isVaild) => {
+      if (isVaild.result === true) {
+        this.props.loginUser({userid, password});
+        let pageName = isVaild.role === 'student'
+          ? 'student_join_question'
+          : 'teacher_create_question';
+        this.props.changeCurrentPage(pageName);
       }
-    );
+    });
     return false;
   }
 
@@ -113,42 +107,32 @@ class LoginView extends Component {
     const handleChange = this.handleChange;
     const handleClick = this.handleClick;
 
-    return (
-      <Form horizontal>
-          <FormGroup>
-            <Col xs={5} xsOffset={1}>
-          <h2>Start</h2>
-            </Col>
-          </FormGroup>
-          <FormGroup controlId="formHorizontalText">
-            <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
+    return (<Form horizontal="horizontal">
+      <FormGroup controlId="formHorizontalText">
+        <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
               <h4><Glyphicon glyph="user" /></h4>
-            </Col>
-            <Col xs={7}>
-              <FormControl name="userid" type="text" placeholder="input your userid" value={userid} onChange={handleChange} />
-            </Col>
-          </FormGroup>
-          <FormGroup controlId="formHorizontalPassword">
-            <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
-              <h4><Glyphicon glyph="eye-close" /></h4>
-            </Col>
-            <Col xs={7}>
-              <FormControl name="password" type="password" placeholder="input your password" value={password} onChange={handleChange} />
-            </Col>
-          </FormGroup>
-          <FormGroup>
-          <Col xsOffset={2} xs={7}>
-          <Button type="submit" bsStyle="primary" onClick={handleClick}>Enter Now</Button>
-          </Col>
-          </FormGroup>
-      </Form>
-    );
+        </Col>
+        <Col xs={7} xsOffset={0}>
+          <TextField name="userid" hintText="Input your userid"  value={userid} onChange={handleChange}/>
+        </Col>
+      </FormGroup>
+      <FormGroup controlId="formHorizontalPassword">
+        <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
+          <h4><Glyphicon glyph="eye-close" /></h4>
+        </Col>
+        <Col xs={7} xsOffset={0}>
+          <TextField name="password" hintText="Input your password"  type="password" value={password} onChange={handleChange}/>
+        </Col>
+      </FormGroup>
+      <FormGroup>
+        <Col xsOffset={2} xs={7}>
+          <RaisedButton type="submit" primary={true} onClick={handleClick} label="Submit"/>
+        </Col>
+      </FormGroup>
+    </Form>);
   }
 }
 
-const Login = connect(
-  mapStateToProps,
-  mapDispatchProps
-)(LoginView);
+const Login = connect(mapStateToProps, mapDispatchProps)(LoginView);
 
 export default Login;

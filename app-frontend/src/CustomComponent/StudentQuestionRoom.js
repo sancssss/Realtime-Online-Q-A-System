@@ -3,6 +3,10 @@ import { Button, Form, FormGroup, ControlLabel, Col, Glyphicon, ToggleButtonGrou
 import fetch from 'isomorphic-fetch';
 import { connect } from 'react-redux';
 import { changeCurrentPage } from '../Actions';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import Chip from 'material-ui/Chip';
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -24,7 +28,7 @@ class StudentQuestionRoomView extends Component {
       timeRemain: 3,
       questionText: '',
       minuteText: '3',
-      answerValue: [],//student's answer
+      answerValue: '',//student's answer
     }
   }
 
@@ -98,7 +102,7 @@ class StudentQuestionRoomView extends Component {
     const questionText = this.props.questionText;
     const minuteText = this.props.minuteText;
     const userid = this.props.userid;
-    const roomid = this.props.roomId;
+    const roomId = this.props.roomId;
     const answerValue = this.state.answerValue
     const handleAnswerChange = this.handleAnswerChange;
     const handleSubmit = this.handleSubmit;
@@ -106,10 +110,11 @@ class StudentQuestionRoomView extends Component {
     return (
       <Form horizontal>
           <FormGroup>
-            <Col xs={8} xsOffset={1}>
-          <h4>{userid} | Room ID: {roomid}</h4>
+            <Col xs={8} xsOffset={0}>
+              <Chip>Room ID: {roomId}</Chip>
             </Col>
           </FormGroup>
+          <Card>
           <FormGroup>
           <Col xs={1} xsOffset={1}>
             <h4><Glyphicon glyph="question-sign" /></h4>
@@ -120,11 +125,17 @@ class StudentQuestionRoomView extends Component {
           </FormGroup>
           <FormGroup>
           <Col xs={8} xsOffset={1}>
-            <Well>
-              {questionText}
-            </Well>
+            <CardText>
+              <Well>
+                {questionText}
+              </Well>
+            </CardText>
+          </Col>
+          <Col xs={8} xsOffset={1}>
+              <h5>Time Remain: {minuteText} S</h5>
           </Col>
           </FormGroup>
+          </Card>
           <FormGroup>
           <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
             <h4><Glyphicon glyph="ok" /></h4>
@@ -139,23 +150,8 @@ class StudentQuestionRoomView extends Component {
             </Col>
           </FormGroup>
           <FormGroup>
-          <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
-            <h4><Glyphicon glyph="time" /></h4>
-          </Col>
-          <Col xs={5}>
-              <h5>Period Of Validity</h5>
-          </Col>
-          </FormGroup>
-          <FormGroup>
-            <Col xs={8} xsOffset={1}>
-              <Well bsSize="small">
-                <h4>{minuteText} minute(s)</h4>
-              </Well>
-            </Col>
-          </FormGroup>
-          <FormGroup>
-          <Col xsOffset={2} xs={8}>
-          <Button type="submit" bsStyle="success" onClick={handleSubmit}>Submit Answer</Button>
+          <Col xsOffset={1} xs={8}>
+              <RaisedButton type="submit" primary={true} onClick={handleSubmit} label="Submit"/>
           </Col>
           </FormGroup>
       </Form>
@@ -167,7 +163,8 @@ class ToggleButtonGroupControlled extends React.Component {
   render() {
     return (
       <ToggleButtonGroup
-        type="checkbox"
+        type="radio"
+        name="options"
         value={this.props.value}
         onChange={this.props.onChange}
       >

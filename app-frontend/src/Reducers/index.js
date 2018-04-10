@@ -1,8 +1,16 @@
-import { LOGIN_USER, STUDENT_JOIN_ROOM, TEACHER_CREATE_ROOM, CHANGE_CURRENT_PAGE } from '../Constants/ActionTypes';
-import { combineReducers } from 'redux';
+import {
+  LOGIN_USER,
+  STUDENT_JOIN_ROOM,
+  TEACHER_CREATE_ROOM,
+  CHANGE_CURRENT_PAGE
+} from '../Constants/ActionTypes';
+import {
+  combineReducers
+} from 'redux';
 
 const inintalPageChangeState = {
-  pageName: 'index_login'
+  pageName: 'index_login',
+  appBarTitle: 'Online Assignment'
 }
 
 const initialLoginState = {
@@ -23,8 +31,8 @@ const initialStudentState = {
   studentQuestionText: '',
 };
 
-const loginReducer = (state=initialLoginState, action) => {
-  switch(action.type) {
+const loginReducer = (state = initialLoginState, action) => {
+  switch (action.type) {
     case LOGIN_USER:
       return Object.assign({}, state, {
         userid: action.loginData.userid,
@@ -35,21 +43,21 @@ const loginReducer = (state=initialLoginState, action) => {
   }
 }
 
-const pageChangeReducer = (state=inintalPageChangeState, action) => {
-  switch(action.type) {
+const pageChangeReducer = (state = inintalPageChangeState, action) => {
+  switch (action.type) {
     case CHANGE_CURRENT_PAGE:
-    return Object.assign({}, state, {
-      currentPage: action.pageName
-    });
+      return Object.assign({}, state, {
+        currentPage: action.pageName,
+        appBarTitle: action.pageName
+      });
     default:
       return state;
   }
 }
 
-const teacherRoomReducer = (state=initialTeacherState, action) => {
+const teacherRoomReducer = (state = initialTeacherState, action) => {
   switch (action.type) {
     case TEACHER_CREATE_ROOM:
-      console.log('action.roomData.teacherJoinRoomId '+ action.roomData.teacherJoinRoomId)
       return Object.assign({}, state, {
         teacherCreateRoomId: action.roomData.teacherCreateRoomId,
         teacherQuestionTime: action.roomData.teacherQuestionTime,
@@ -61,7 +69,7 @@ const teacherRoomReducer = (state=initialTeacherState, action) => {
   }
 };
 
-const studentRoomReducer = (state=initialStudentState, action) => {
+const studentRoomReducer = (state = initialStudentState, action) => {
   switch (action.type) {
     case STUDENT_JOIN_ROOM:
       return Object.assign({}, state, {

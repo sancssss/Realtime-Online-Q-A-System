@@ -17,6 +17,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
 import Chip from 'material-ui/Chip';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state, ownProps) => {
   return {userid: state.loginReducer.userid}
@@ -137,12 +138,12 @@ class TeacherCreateQuestionView extends Component {
     return (<Form horizontal="horizontal">
       <FormGroup>
         <Col xs={8} xsOffset={0}>
-          <Chip>Teacher User: {userid}</Chip>
+          <Chip><FormattedMessage id='teacher_user'/>: {userid}</Chip>
         </Col>
       </FormGroup>
       <FormGroup>
-        <Col xs={5} xsOffset={1}>
-          <h5>Input Question</h5>
+        <Col xs={8} xsOffset={1}>
+          <h5><FormattedMessage id='input_your_question'/></h5>
         </Col>
       </FormGroup>
       <FormGroup controlId="formHorizontalText">
@@ -150,12 +151,12 @@ class TeacherCreateQuestionView extends Component {
           <h4><Glyphicon glyph="pencil"/></h4>
         </Col>
         <Col xs={7}>
-          <TextField name="question_text" hintText="Describle your question briefly" value={questionText} onChange={this.handleTextChange}/>
+          <TextField name="question_text" hintText={<FormattedMessage id='describle_your_question'/>} value={questionText} onChange={this.handleTextChange}/>
         </Col>
       </FormGroup>
       <FormGroup>
         <Col xs={5} xsOffset={1}>
-          <h5>Give right answer</h5>
+          <h5><FormattedMessage id='set_correct_answer'/></h5>
         </Col>
       </FormGroup>
       <FormGroup controlId="formHorizontalText">
@@ -168,7 +169,7 @@ class TeacherCreateQuestionView extends Component {
       </FormGroup>
       <FormGroup>
         <Col xs={5} xsOffset={1}>
-          <h5>Period of Validity</h5>
+          <h5><FormattedMessage id='period_of_validity'/></h5>
         </Col>
       </FormGroup>
       <FormGroup controlId="formHorizontalTime">
@@ -179,12 +180,12 @@ class TeacherCreateQuestionView extends Component {
           <Slider min={0.5} max={8} step={0.5} value={minuteText} onChange={this.handleMinuteChange} />
         </Col>
         <Col xs={2}>
-          <h5>{minuteText} minutes</h5>
+          <h5>{minuteText} <FormattedMessage id='minutes_timescale'/></h5>
         </Col>
       </FormGroup>
       <FormGroup>
         <Col xsOffset={2} xs={7}>
-          <RaisedButton type="submit" primary={true} onClick={handleSubmit} label="Create"/>
+          <RaisedButton type="submit" primary={true} onClick={handleSubmit} label={<FormattedMessage id='create'/>}/>
         </Col>
       </FormGroup>
     </Form>);
@@ -202,6 +203,6 @@ class ToggleButtonGroupControlled extends React.Component {
   }
 }
 
-const TeacherCreateQuestion = connect(mapStateToProps, mapDispatchProps)(TeacherCreateQuestionView);
+const TeacherCreateQuestion = injectIntl(connect(mapStateToProps, mapDispatchProps)(TeacherCreateQuestionView));
 
 export default TeacherCreateQuestion;

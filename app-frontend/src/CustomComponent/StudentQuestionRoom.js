@@ -7,6 +7,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Chip from 'material-ui/Chip';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -120,7 +121,7 @@ class StudentQuestionRoomView extends Component {
             <h4><Glyphicon glyph="question-sign" /></h4>
           </Col>
           <Col xs={5}>
-              <h5>Question:</h5>
+              <h5><FormattedMessage id='question'/></h5>
           </Col>
           </FormGroup>
           <FormGroup>
@@ -132,7 +133,7 @@ class StudentQuestionRoomView extends Component {
             </CardText>
           </Col>
           <Col xs={8} xsOffset={1}>
-              <h5>Time Remain: {minuteText} S</h5>
+              <h5><FormattedMessage id='time_remain'/>: <FormattedMessage id='second_timescale'/> S</h5>
           </Col>
           </FormGroup>
           </Card>
@@ -141,7 +142,7 @@ class StudentQuestionRoomView extends Component {
             <h4><Glyphicon glyph="ok" /></h4>
           </Col>
           <Col xs={5}>
-              <h5>Select Your Answer</h5>
+              <h5><FormattedMessage id='selectanswer'/></h5>
           </Col>
           </FormGroup>
           <FormGroup controlId="formHorizontalText">
@@ -151,7 +152,7 @@ class StudentQuestionRoomView extends Component {
           </FormGroup>
           <FormGroup>
           <Col xsOffset={1} xs={8}>
-              <RaisedButton type="submit" primary={true} onClick={handleSubmit} label="Submit"/>
+              <RaisedButton type="submit" primary={true} onClick={handleSubmit} label={<FormattedMessage id='submit'/>}/>
           </Col>
           </FormGroup>
       </Form>
@@ -176,9 +177,9 @@ class ToggleButtonGroupControlled extends React.Component {
     );
   }
 }
-const StudentQuestionRoom = connect(
+const StudentQuestionRoom = injectIntl(connect(
   mapStateToProps,
   null
-)(StudentQuestionRoomView);
+)(StudentQuestionRoomView));
 
 export default StudentQuestionRoom;

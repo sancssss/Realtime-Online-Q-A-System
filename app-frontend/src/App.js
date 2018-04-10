@@ -5,8 +5,11 @@ import TeacherCreateQuestion from './CustomComponent/TeacherCreateQuestion';
 import StudentJoinQuestion from './CustomComponent/StudentJoinQuestion';
 import StudentQuestionRoom from './CustomComponent/StudentQuestionRoom';
 import TeacherQuestionRoom from './CustomComponent/TeacherQuestionRoom';
-import {Panel} from 'react-bootstrap';
 import {connect} from 'react-redux';
+import {IntlProvider, FormattedMessage, injectIntl} from 'react-intl';
+import zh_CN from './languages/zh_CN';
+import en_UK from './languages/en_UK';
+import {Panel} from 'react-bootstrap';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton'
@@ -25,6 +28,25 @@ class AppView extends Component {
   location = 'http://localhost:5000/';
   //location = 'http://os.ply18.space/';
   socket = io(this.location + 'class');
+
+  constructor(props) {
+    super(props);
+    this.switchLanguage = this.switchLanguage.bind(this);
+    this.state = {
+      languge: en_UK, langugeCode: 'en'
+    }
+  }
+
+  switchLanguage(event) {
+    let nextLanguageCode = '';
+    if (this.state.langugeCode === 'cn') {
+      nextLanguageCode = 'en';
+      this.setState({languge: en_UK, langugeCode: nextLanguageCode});
+    } else {
+      nextLanguageCode = 'cn';
+      this.setState({languge: zh_CN, langugeCode: nextLanguageCode});
+    }
+  }
 
   render() {
     //console.log("now re-render something");
@@ -50,22 +72,29 @@ class AppView extends Component {
       default:
         renderDOM = <Login/>
     }
-
+    //background paper
     const style = {
-      padding:'5% 2% 2% 2%',
+      padding: '5% 2% 2% 2%',
       height: '100%',
       margin: '5% 5% 5% 5%',
-      display: 'block',
+      display: 'block'
     };
 
-    return (
+    //languge
+    const languge = this.state.languge;
+    return (<IntlProvider locale={'en'} messages={languge}>
       <MuiThemeProvider>
-        <AppBar title={appBarTitle} iconElementRight={<FlatButton label="EN" />}/>
-        <Paper style={style} zDepth={2} >
+        <AppBar title={appBarTitle} iconElementRight={<FlatButton label = {
+            <FormattedMessage id='change_language'/>
+          }
+          onClick = {
+            this.switchLanguage
+          } />}/>
+        <Paper style={style} zDepth={2}>
           {renderDOM}
         </Paper>
       </MuiThemeProvider>
-  );
+    </IntlProvider>);
   }
 }
 

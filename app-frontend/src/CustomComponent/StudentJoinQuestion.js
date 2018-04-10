@@ -6,6 +6,7 @@ import { changeCurrentPage, studentJoinRoom } from '../Actions';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Chip from 'material-ui/Chip';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -125,12 +126,12 @@ class StudentJoinQuestionView extends Component {
       <Form horizontal>
           <FormGroup>
             <Col xs={8} xsOffset={0}>
-              <Chip>Student User: {userid}</Chip>
+              <Chip><FormattedMessage id='studentuser'/>: {userid}</Chip>
             </Col>
           </FormGroup>
           <FormGroup>
           <Col xs={7} xsOffset={1}>
-              <h5>Input Question Room ID</h5>
+              <h5><FormattedMessage id='input_question_room_id'/></h5>
           </Col>
           </FormGroup>
           <FormGroup controlId="formHorizontalText">
@@ -143,7 +144,7 @@ class StudentJoinQuestionView extends Component {
           </FormGroup>
           <FormGroup>
           <Col xsOffset={2} xs={7}>
-          <RaisedButton type="submit" primary={true} onClick={handleSubmit} label="Join"/>
+          <RaisedButton type="submit" primary={true} onClick={handleSubmit} label={<FormattedMessage id='join_room'/>}/>
           </Col>
           </FormGroup>
       </Form>
@@ -151,9 +152,9 @@ class StudentJoinQuestionView extends Component {
   }
 }
 
-const StudentJoinQuestion = connect(
+const StudentJoinQuestion = injectIntl(connect(
   mapStateToProps,
   mapDispatchProps
-)(StudentJoinQuestionView);
+)(StudentJoinQuestionView));
 
 export default StudentJoinQuestion;

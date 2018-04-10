@@ -14,7 +14,7 @@ import {loginUser, changeCurrentPage} from '../Actions';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
-import {red500, yellow500, blue500} from 'material-ui/styles/colors';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state) => {
   return {userid: state.loginReducer.userid, password: state.loginReducer.password}
@@ -113,7 +113,7 @@ class LoginView extends Component {
               <h4><Glyphicon glyph="user" /></h4>
         </Col>
         <Col xs={7} xsOffset={0}>
-          <TextField name="userid" hintText="Input your userid"  value={userid} onChange={handleChange}/>
+          <TextField name="userid" hintText={<FormattedMessage id='login_userid_hintText'/>}  value={userid} onChange={handleChange}/>
         </Col>
       </FormGroup>
       <FormGroup controlId="formHorizontalPassword">
@@ -121,18 +121,18 @@ class LoginView extends Component {
           <h4><Glyphicon glyph="eye-close" /></h4>
         </Col>
         <Col xs={7} xsOffset={0}>
-          <TextField name="password" hintText="Input your password"  type="password" value={password} onChange={handleChange}/>
+          <TextField name="password" hintText={<FormattedMessage id='login_password_hintText'/>}  type="password" value={password} onChange={handleChange}/>
         </Col>
       </FormGroup>
       <FormGroup>
         <Col xsOffset={2} xs={7}>
-          <RaisedButton type="submit" primary={true} onClick={handleClick} label="Submit"/>
+          <RaisedButton type="submit" primary={true} onClick={handleClick} label={<FormattedMessage id='login_submit_label'/>}/>
         </Col>
       </FormGroup>
     </Form>);
   }
 }
 
-const Login = connect(mapStateToProps, mapDispatchProps)(LoginView);
+const Login = injectIntl(connect(mapStateToProps, mapDispatchProps)(LoginView));
 
 export default Login;

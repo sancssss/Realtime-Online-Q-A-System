@@ -7,6 +7,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Chip from 'material-ui/Chip';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -111,7 +112,7 @@ class TeacherQuestionRoomView extends Component {
       <Form horizontal>
           <FormGroup>
             <Col xs={8} xsOffset={0}>
-              <Chip>Room ID: {roomId}</Chip>
+              <Chip><FormattedMessage id='roomid'/>: {roomId}</Chip>
             </Col>
           </FormGroup>
           <Card>
@@ -121,7 +122,7 @@ class TeacherQuestionRoomView extends Component {
               <h4><Glyphicon glyph="question-sign" /></h4>
             </Col>
             <Col xs={5}>
-                <h5>Question:</h5>
+                <h5><FormattedMessage id='question'/>:</h5>
             </Col>
             </FormGroup>
             <FormGroup>
@@ -136,7 +137,7 @@ class TeacherQuestionRoomView extends Component {
               <h4><Glyphicon glyph="ok" /></h4>
             </Col>
             <Col xs={8}>
-                <h5>Correct Answer: {questionAnswer}</h5>
+                <h5><FormattedMessage id='correct_answer'/>: {questionAnswer}</h5>
             </Col>
             </FormGroup>
             <FormGroup>
@@ -144,7 +145,7 @@ class TeacherQuestionRoomView extends Component {
               <h4><Glyphicon glyph="time" /></h4>
             </Col>
             <Col xs={8}>
-                <h5>Time Remain: {minuteText} S</h5>
+                <h5><FormattedMessage id='time_remain'/>: {minuteText} S</h5>
             </Col>
             </FormGroup>
           </CardText>
@@ -154,7 +155,7 @@ class TeacherQuestionRoomView extends Component {
             <h4><Glyphicon glyph="time" /></h4>
           </Col>
           <Col xs={8}>
-              <h5>Student Correct Rate</h5>
+              <h5><FormattedMessage id='student_correct_rate'/></h5>
           </Col>
           </FormGroup>
           <FormGroup>
@@ -164,7 +165,7 @@ class TeacherQuestionRoomView extends Component {
           </FormGroup>
           <FormGroup>
           <Col xsOffset={1} xs={8}>
-            <RaisedButton type="submit" secondary={true} onClick={this.handleSubmit} label="Stop"/>
+            <RaisedButton type="submit" secondary={true} onClick={this.handleSubmit} label={<FormattedMessage id='stop'/>}/>
           </Col>
           </FormGroup>
       </Form>
@@ -172,9 +173,9 @@ class TeacherQuestionRoomView extends Component {
   }
 }
 
-const TeacherQuestionRoom = connect(
+const TeacherQuestionRoom = injectIntl(connect(
   mapStateToProps,
   null
-)(TeacherQuestionRoomView);
+)(TeacherQuestionRoomView));
 
 export default TeacherQuestionRoom;

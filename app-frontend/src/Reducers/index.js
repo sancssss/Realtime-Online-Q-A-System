@@ -10,7 +10,9 @@ import {
 
 const inintalPageChangeState = {
   pageName: 'index_login',
-  appBarTitle: 'Online Assignment'
+  appBarTitle: 'Online Assignment',
+  //location: 'http://os.ply18.space/',
+  location: 'http://localhost:5000/'
 }
 
 const initialLoginState = {
@@ -48,7 +50,8 @@ const pageChangeReducer = (state = inintalPageChangeState, action) => {
     case CHANGE_CURRENT_PAGE:
       return Object.assign({}, state, {
         currentPage: action.pageName,
-        appBarTitle: action.pageName
+        appBarTitle: action.pageName,
+        location: state.location
       });
     default:
       return state;

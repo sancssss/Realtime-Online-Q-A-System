@@ -9,6 +9,7 @@ const en_UK = {
   join_room: 'Join Room',
 
   question: 'Question',
+  answer: 'Answer',
   time_remain: 'Time Remain',
   selectanswer: 'Select your answer',
   submit: 'Submit',
@@ -21,6 +22,8 @@ const en_UK = {
   second_timescale: 's',
   minutes_timescale: 'minute(s)',
   create: 'Create',
+  other: 'Other',
+  create_a_new_answer: 'Create a new answer',
 
   roomid: 'Room ID',
   correct_answer: 'Correct answer',

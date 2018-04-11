@@ -10,6 +10,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    location: state.pageChangeReducer.location,
     userid: state.loginReducer.userid,
     roomId: state.studentRoomReducer.studentJoinRoomId,
     questionText: state.studentRoomReducer.studentQuestionText,
@@ -25,8 +26,7 @@ const mapDispatchProps = (dispatch) => {
 }
 
 class StudentJoinQuestionView extends Component {
-  location = 'http://localhost:5000/';
-  //location = 'http://os.ply18.space/';
+  location = this.props.location;//location save to redux store
   constructor(props) {
     super(props);
     this.state = {

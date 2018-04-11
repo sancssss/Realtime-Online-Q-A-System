@@ -9,6 +9,7 @@ const zh_CN = {
   join_room: '进入房间',
 
   question: '问题',
+  answer: '答案',
   time_remain: '剩余时间',
   selectanswer: '请选择答案',
   submit: '提交',
@@ -21,6 +22,8 @@ const zh_CN = {
   minutes_timescale: '分钟',
   second_timescale: '秒',
   create: '创建',
+  other: '其它',
+  create_a_new_answer: '创建新的答案',
 
   roomid: '房间号',
   correct_answer: '正确答案',

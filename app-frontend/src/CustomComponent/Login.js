@@ -17,7 +17,7 @@ import FontIcon from 'material-ui/FontIcon';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state) => {
-  return {userid: state.loginReducer.userid, password: state.loginReducer.password}
+  return {location: state.pageChangeReducer.location, userid: state.loginReducer.userid, password: state.loginReducer.password}
 };
 
 //loginData:{userid, password, role}
@@ -29,8 +29,7 @@ const mapDispatchProps = (dispatch) => {
 }
 
 class LoginView extends Component {
-  location = 'http://localhost:5000/';
-  //location = 'http://os.ply18.space/';
+  location = this.props.location;//location save to redux store
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);

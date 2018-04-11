@@ -4,13 +4,16 @@ import fetch from 'isomorphic-fetch';
 import { connect } from 'react-redux';
 import { changeCurrentPage } from '../Actions';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
+import Dialog from 'material-ui/Dialog';
 import Chip from 'material-ui/Chip';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    location: state.pageChangeReducer.location,
     userid: state.loginReducer.userid,
     questionText: state.studentRoomReducer.studentQuestionText,
     minuteText: state.studentRoomReducer.studentQuestionTime,
@@ -19,18 +22,56 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 class StudentQuestionRoomView extends Component {
-  location = 'http://localhost:5000/';
-  //location = 'http://os.ply18.space/';
+  location = this.props.location;//location save to redux store
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleAnswerChange = this.handleAnswerChange.bind(this);
+    this.handleOptionalAnswerChange = this.handleOptionalAnswerChange.bind(this);
+    this.handleAnswerDialog = this.handleAnswerDialog.bind(this);
     this.state = {
       timeRemain: 3,
       questionText: '',
       minuteText: '3',
       answerValue: '',//student's answer
+      optionalAnswerOpen: false, //control optional answer dialog
+      optionalAnswerValue: ''
     }
+  }
+
+  handleSubmit(event) {
+    console.log("handkA start");
+    const answer = this.state.answerValue;
+    if(answer) {
+      console.log("handleSubmitsuccessful:" + answer);
+      let textOjb = {userid: this.props.userid, answer: answer};
+      this.props.socketio.emit('text', textOjb, String(this.props.roomId));
+      //this.props.onTCQuestionChange('quick_question_room');
+      event.preventDefault();
+    } else {
+      console.log("handleSubmitfailed:" + answer);
+      event.preventDefault();
+      //this.props.onTCQuestionChange('teacher_create_question');
+    }
+    event.preventDefault();
+  }
+
+  handleAnswerDialog(event) {
+    this.setState({
+      optionalAnswerOpen: this.state.optionalAnswerOpen === false
+        ? true
+        : false
+    });
+  }
+
+  handleOptionalAnswerChange(event) {
+    const target = event.target;
+    const value = target.value;
+    console.log("babdhbsj:"+this.state.answerValue)
+    this.setState({
+      optionalAnswerValue: value,
+      answerValue: value
+    });
   }
 
   getQuestion() {
@@ -82,23 +123,6 @@ class StudentQuestionRoomView extends Component {
     );
   }
 
-  handleSubmit(event) {
-    console.log("handkA start");
-    const answer = this.state.answerValue;
-    if(answer) {
-      console.log("handleSubmitsuccessful:" + answer);
-      let textOjb = {userid: this.props.userid, answer: answer};
-      this.props.socketio.emit('text', textOjb, String(this.props.roomId));
-      //this.props.onTCQuestionChange('quick_question_room');
-      event.preventDefault();
-    } else {
-      console.log("handleSubmitfailed:" + answer);
-      event.preventDefault();
-      //this.props.onTCQuestionChange('teacher_create_question');
-    }
-    event.preventDefault();
-  }
-
   render() {
     const questionText = this.props.questionText;
     const minuteText = this.props.minuteText;
@@ -107,6 +131,17 @@ class StudentQuestionRoomView extends Component {
     const answerValue = this.state.answerValue
     const handleAnswerChange = this.handleAnswerChange;
     const handleSubmit = this.handleSubmit;
+    const optionalAnswerValue = this.state.optionalAnswerValue;
+    const disableAnserGroup = optionalAnswerValue === '' ? false : true;
+    const handleAnswerDialog = this.handleAnswerDialog;
+    const optionalAnswerActions = [
+      <FlatButton
+        label={<FormattedMessage id='submit'/>}
+        primary={true}
+        keyboardFocused={true}
+        onClick={handleAnswerDialog}
+      />,
+    ];
 
     return (
       <Form horizontal>
@@ -146,8 +181,12 @@ class StudentQuestionRoomView extends Component {
           </Col>
           </FormGroup>
           <FormGroup controlId="formHorizontalText">
-            <Col xs={8} xsOffset={1}>
-              <ToggleButtonGroupControlled onChange={handleAnswerChange} value={answerValue}/>
+            <Col xs={9} xsOffset={1}>
+              <ToggleButtonGroupControlled disabled={disableAnserGroup} onChange={handleAnswerChange} value={answerValue}/>
+              <RaisedButton label={<FormattedMessage id = 'other' />} onClick={handleAnswerDialog}/>
+              <Dialog title={<FormattedMessage id = 'create_a_new_answer' />} actions={optionalAnswerActions} modal={false} open={this.state.optionalAnswerOpen} onRequestClose={handleAnswerDialog}>
+                <TextField name="answer_text" hintText={<FormattedMessage id = 'answer' />} value={optionalAnswerValue} onChange={this.handleOptionalAnswerChange}/>
+              </Dialog>
             </Col>
           </FormGroup>
           <FormGroup>
@@ -169,10 +208,10 @@ class ToggleButtonGroupControlled extends React.Component {
         value={this.props.value}
         onChange={this.props.onChange}
       >
-        <ToggleButton value={'A'}>A</ToggleButton>
-        <ToggleButton value={'B'}>B</ToggleButton>
-        <ToggleButton value={'C'}>C</ToggleButton>
-        <ToggleButton value={'D'}>D</ToggleButton>
+        <ToggleButton disabled={this.props.disabled} value={'A'}>A</ToggleButton>
+        <ToggleButton disabled={this.props.disabled} value={'B'}>B</ToggleButton>
+        <ToggleButton disabled={this.props.disabled} value={'C'}>C</ToggleButton>
+        <ToggleButton disabled={this.props.disabled} value={'D'}>D</ToggleButton>
       </ToggleButtonGroup>
     );
   }

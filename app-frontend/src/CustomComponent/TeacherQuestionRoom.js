@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon, ToggleButtonGroup, ToggleButton, Well, ProgressBar} from 'react-bootstrap';
+import {Form, FormGroup, ControlLabel, Col, Glyphicon, Well, ProgressBar} from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
 import { connect } from 'react-redux';
 import { changeCurrentPage } from '../Actions';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Chip from 'material-ui/Chip';
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
+import {Card, CardText} from 'material-ui/Card';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 const mapStateToProps = (state, ownProps) => {
@@ -56,11 +56,11 @@ class TeacherQuestionRoomView extends Component {
 
   updateAnswerCount(obj) {
     const correctAnswer = this.props.questionAnswer;
-    //console.log("someones answer is" + obj.answer[0]);
-    //console.log("correctAnswer is" + correctAnswer);
+    console.log("someones answer is" + obj.answer);
+    console.log("correctAnswer is" + correctAnswer);
     const submitAnswerCount = Number(this.state.submitAnswerCount) + 1;
     const correctAnswerCount = Number(this.state.correctAnswerCount) + 1;
-    if(String(correctAnswer) === String(obj.answer[0])) {
+    if(String(correctAnswer).valueOf() === String(obj.answer).valueOf()) {
       console.log("someone answer is right")
       this.setState({
         'correctAnswerCount': correctAnswerCount,
@@ -100,7 +100,6 @@ class TeacherQuestionRoomView extends Component {
     const questionText = this.props.questionText;
     const questionAnswer = this.props.questionAnswer;
     const minuteText = this.props.endTime;
-    const userid = this.props.userid;
     const roomId = this.props.roomId;
 
     const correctSubmit = this.state.correctAnswerCount;

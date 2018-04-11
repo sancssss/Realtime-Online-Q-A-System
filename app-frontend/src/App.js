@@ -6,27 +6,25 @@ import StudentJoinQuestion from './CustomComponent/StudentJoinQuestion';
 import StudentQuestionRoom from './CustomComponent/StudentQuestionRoom';
 import TeacherQuestionRoom from './CustomComponent/TeacherQuestionRoom';
 import {connect} from 'react-redux';
-import {IntlProvider, FormattedMessage, injectIntl} from 'react-intl';
+import {IntlProvider, FormattedMessage} from 'react-intl';
 import zh_CN from './languages/zh_CN';
 import en_UK from './languages/en_UK';
-import {Panel} from 'react-bootstrap';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton'
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import Paper from 'material-ui/Paper';
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    location: state.pageChangeReducer.location,
     currentPage: state.pageChangeReducer.currentPage, // TODO: use react-router
     userid: state.loginReducer.userid,
-    appBarTitle: state.pageChangeReducer.appBarTitle
+    appBarTitle: state.pageChangeReducer.appBarTitle,
   }
 };
 
 class AppView extends Component {
-  location = 'http://localhost:5000/';
-  //location = 'http://os.ply18.space/';
+  location = this.props.location;//location save to redux store
   socket = io(this.location + 'class');
 
   constructor(props) {
@@ -51,7 +49,6 @@ class AppView extends Component {
   render() {
     //console.log("now re-render something");
     let renderDOM;
-    const userid = this.props.userid;
     const appBarTitle = this.props.appBarTitle;
     switch (this.props.currentPage) {
       case 'index_login':

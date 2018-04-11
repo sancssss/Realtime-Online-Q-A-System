@@ -126,7 +126,7 @@ class StudentJoinQuestionView extends Component {
       <Form horizontal>
           <FormGroup>
             <Col xs={8} xsOffset={0}>
-              <Chip><FormattedMessage id='studentuser'/>: {userid}</Chip>
+              <Chip><FormattedMessage id='student_user'/>: {userid}</Chip>
             </Col>
           </FormGroup>
           <FormGroup>

@@ -13,6 +13,7 @@ const en_UK = {
   time_remain: 'Time Remain',
   selectanswer: 'Select your answer',
   submit: 'Submit',
+  submit_successful: 'Submit successful',
 
   teacher_user: 'Teacher User',
   input_your_question: 'Input your question',

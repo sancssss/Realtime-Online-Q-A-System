@@ -13,6 +13,7 @@ const zh_CN = {
   time_remain: '剩余时间',
   selectanswer: '请选择答案',
   submit: '提交',
+  submit_successful: '提交成功',
 
   teacher_user: '教师用户',
   input_your_question: '输入您的问题',

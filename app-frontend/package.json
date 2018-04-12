@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "history": "^4.7.2",
     "intl": "^1.2.5",
     "material-ui": "^0.20.0",
     "react": "^16.2.0",
@@ -11,6 +12,7 @@
     "react-i18next": "^7.5.1",
     "react-intl": "^2.4.0",
     "react-redux": "^5.0.7",
+    "react-router-redux": "^5.0.0-alpha.9",
     "react-scripts": "1.1.1",
     "redux": "^3.7.2",
     "redux-form": "^7.3.0",

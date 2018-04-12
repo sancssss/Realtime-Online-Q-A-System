@@ -128,7 +128,9 @@ class StudentQuestionRoomView extends Component {
   handleTeacherCommand(obj) {
     switch(obj.command) {
       case 'stop':
-        this.setState({isSubmitted: true});
+        this.setState({isSubmitted: true, timeRemain: 0});
+        //set timer to zero
+        clearInterval(this.timerId);
         break;
       default:
     }

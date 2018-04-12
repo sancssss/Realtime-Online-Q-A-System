@@ -7,12 +7,16 @@ import StudentQuestionRoom from './CustomComponent/StudentQuestionRoom';
 import TeacherQuestionRoom from './CustomComponent/TeacherQuestionRoom';
 import {connect} from 'react-redux';
 import {IntlProvider, FormattedMessage} from 'react-intl';
+import { Route, Switch } from 'react-router-dom'
 import zh_CN from './languages/zh_CN';
 import en_UK from './languages/en_UK';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton'
 import Paper from 'material-ui/Paper';
+import { withRouter } from 'react-router-dom'
+import { ConnectedRouter } from 'react-router-redux';
+import { history } from './Stores';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -47,39 +51,12 @@ class AppView extends Component {
   }
 
   render() {
-    //console.log("now re-render something");
-    let renderDOM;
     const appBarTitle = this.props.appBarTitle;
-    switch (this.props.currentPage) {
-      case 'index_login':
-        renderDOM = <Login/>
-        break;
-      case 'teacher_create_question':
-        renderDOM = <TeacherCreateQuestion socketio={this.socket}/>
-        break;
-      case 'student_join_question':
-        renderDOM = <StudentJoinQuestion socketio={this.socket}/>
-        break;
-      case 'student_question_room':
-        renderDOM = <StudentQuestionRoom socketio={this.socket}/>
-        break;
-      case 'teacher_question_room':
-        renderDOM = <TeacherQuestionRoom socketio={this.socket}/>
-        break;
-      default:
-        renderDOM = <Login/>
-    }
-    //background paper
-    const style = {
-      padding: '5% 2% 2% 2%',
-      height: '100%',
-      margin: '5% 5% 5% 5%',
-      display: 'block'
-    };
-
-    //languge
     const languge = this.state.languge;
-    return (<IntlProvider locale={'en'} messages={languge}>
+    //background paper
+    const style = { padding: '5% 2% 2% 2%', height: '100%', margin: '5% 5% 5% 5%', display: 'block'};
+    return (
+      <IntlProvider locale={'en'} messages={languge}>
       <MuiThemeProvider>
         <AppBar title={appBarTitle} iconElementRight={<FlatButton label = {
             <FormattedMessage id='change_language'/>
@@ -88,7 +65,16 @@ class AppView extends Component {
             this.switchLanguage
           } />}/>
         <Paper style={style} zDepth={2}>
-          {renderDOM}
+          <ConnectedRouter history={history}>
+          <Switch>
+            <Route exact path='/' component={Login}/>
+            <Route path='/TeacherQuestionRoom' component={(props) => <TeacherQuestionRoom {...props} socketio={this.socket}/>}/>
+            <Route path='/TeacherCreateQuestion' component={(props) => <TeacherCreateQuestion {...props} socketio={this.socket}/>}/>
+            <Route path='/StudentJoinQuestion' component={(props) => <StudentJoinQuestion {...props} socketio={this.socket}/>}/>
+            <Route path='/StudentQuestionRoom' component={(props) => <StudentQuestionRoom {...props} socketio={this.socket}/>}/>
+            <Route component={Login}/>
+          </Switch>
+        </ConnectedRouter>
         </Paper>
       </MuiThemeProvider>
     </IntlProvider>);
@@ -96,5 +82,4 @@ class AppView extends Component {
 }
 
 const App = connect(mapStateToProps, null)(AppView);
-
 export default App;

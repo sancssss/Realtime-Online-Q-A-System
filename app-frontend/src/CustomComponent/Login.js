@@ -10,11 +10,13 @@ import {
 } from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
 import {connect} from 'react-redux';
-import {loginUser, changeCurrentPage} from '../Actions';
+import {loginUser, changeAppTitleTo} from '../Actions';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { push } from 'react-router-redux';
+import { withRouter } from 'react-router-dom';
 
 const mapStateToProps = (state) => {
   return {location: state.pageChangeReducer.location, userid: state.loginReducer.userid, password: state.loginReducer.password}
@@ -24,7 +26,8 @@ const mapStateToProps = (state) => {
 const mapDispatchProps = (dispatch) => {
   return {
     loginUser: loginData => dispatch(loginUser(loginData)),
-    changeCurrentPage: pageName => dispatch(changeCurrentPage(pageName))
+    changeAppTitleTo: title => dispatch(changeAppTitleTo(title)),
+    switchRoute: routerName => dispatch(push(routerName))
   }
 }
 
@@ -91,10 +94,14 @@ class LoginView extends Component {
     (isVaild) => {
       if (isVaild.result === true) {
         this.props.loginUser({userid, password});
-        let pageName = isVaild.role === 'student'
-          ? 'student_join_question'
-          : 'teacher_create_question';
-        this.props.changeCurrentPage(pageName);
+        let routerName = isVaild.role === 'student'
+          ? 'StudentJoinQuestion'
+          : 'TeacherCreateQuestion';
+        let title = isVaild.role === 'student'
+          ? <FormattedMessage id='join_a_room'/>
+          : <FormattedMessage id='create_a_question'/>;
+        this.props.switchRoute(routerName);
+        this.props.changeAppTitleTo(title);
       }
     });
     return false;
@@ -132,6 +139,6 @@ class LoginView extends Component {
   }
 }
 
-const Login = injectIntl(connect(mapStateToProps, mapDispatchProps)(LoginView));
+const Login = injectIntl(withRouter(connect(mapStateToProps, mapDispatchProps)(LoginView)));
 
 export default Login;

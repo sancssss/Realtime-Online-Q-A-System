@@ -41,7 +41,8 @@ class TeacherQuestionRoomView extends Component {
   handleSubmit(event) {
     //send stop command
     let textOjb = {type: 'command', command: 'stop'}
-    this.setState({isStoped: true});
+    this.setState({isStoped: true, timeRemain: 0});
+    clearInterval(this.timerId);
     this.props.socketio.emit('text', textOjb, String(this.props.roomId));
     event.preventDefault();
   }

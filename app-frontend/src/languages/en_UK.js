@@ -1,4 +1,9 @@
 const en_UK = {
+  //app title
+  create_a_question: 'Create a question',
+  answer_a_question: 'Answer a question',
+  join_a_room: 'Join a room',
+
   change_language: '中文',
   login_userid_hintText: 'Input your userid',
   login_password_hintText: 'Input your password',

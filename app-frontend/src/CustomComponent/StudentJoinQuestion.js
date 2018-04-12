@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import { Button, Form, FormGroup, FormControl, ControlLabel, Col, Glyphicon, ToggleButtonGroup, ToggleButton} from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
 import { connect } from 'react-redux';
-import { changeCurrentPage, studentJoinRoom } from '../Actions';
+import { changeAppTitleTo, studentJoinRoom } from '../Actions';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Chip from 'material-ui/Chip';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { withRouter } from 'react-router-dom';
+import { push } from 'react-router-redux';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -21,7 +23,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchProps = (dispatch) => {
   return {
     studentJoinRoom: roomData => dispatch(studentJoinRoom(roomData)),
-    changeCurrentPage: pageName => dispatch(changeCurrentPage(pageName))
+    changeAppTitleTo: title => dispatch(changeAppTitleTo(title)),
+    switchRoute: routerName => dispatch(push(routerName))
   }
 }
 
@@ -104,12 +107,13 @@ class StudentJoinQuestionView extends Component {
         };
         this.props.studentJoinRoom(roomData);
         this.props.socketio.emit('joined', joinOjb, this.state.roomId);
-        this.props.changeCurrentPage('student_question_room');
+        this.props.switchRoute('StudentQuestionRoom');
+        this.props.changeAppTitleTo(<FormattedMessage id = 'answer_a_question' />);
         event.preventDefault();
       } else {
         console.log("handleSubmitfailed:" + data.result);
         event.preventDefault();
-        this.props.changeCurrentPage('student_join_question');
+        this.props.switch('studentJoinRoom');
       }
     }
     );
@@ -152,9 +156,9 @@ class StudentJoinQuestionView extends Component {
   }
 }
 
-const StudentJoinQuestion = injectIntl(connect(
+const StudentJoinQuestion = injectIntl(withRouter(connect(
   mapStateToProps,
   mapDispatchProps
-)(StudentJoinQuestionView));
+)(StudentJoinQuestionView)));
 
 export default StudentJoinQuestion;

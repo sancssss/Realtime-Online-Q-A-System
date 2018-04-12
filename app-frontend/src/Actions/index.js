@@ -1,12 +1,12 @@
-import { CHANGE_CURRENT_PAGE, LOGIN_USER, STUDENT_JOIN_ROOM, TEACHER_CREATE_ROOM} from '../Constants/ActionTypes';
+import { CHANGE_APP_TITLE, LOGIN_USER, STUDENT_JOIN_ROOM, TEACHER_CREATE_ROOM} from '../Constants/ActionTypes';
 
 //Object loginData
 export function loginUser(loginData) {
   return {type: LOGIN_USER, loginData};
 }
-//String currentPage
-export function changeCurrentPage(pageName) {
-  return {type: CHANGE_CURRENT_PAGE, pageName}
+//String title
+export function changeAppTitleTo(title) {
+  return {type: CHANGE_APP_TITLE, title}
 }
 //Object roomData
 export function studentJoinRoom(roomData) {

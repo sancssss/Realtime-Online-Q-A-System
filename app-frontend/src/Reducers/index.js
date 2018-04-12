@@ -2,14 +2,14 @@ import {
   LOGIN_USER,
   STUDENT_JOIN_ROOM,
   TEACHER_CREATE_ROOM,
-  CHANGE_CURRENT_PAGE
+  CHANGE_APP_TITLE
 } from '../Constants/ActionTypes';
 import {
   combineReducers
 } from 'redux';
+import { routerReducer } from 'react-router-redux'
 
 const inintalPageChangeState = {
-  pageName: 'index_login',
   appBarTitle: 'Online Assignment',
   //location: 'http://os.ply18.space/',
   location: 'http://localhost:5000/'
@@ -47,11 +47,9 @@ const loginReducer = (state = initialLoginState, action) => {
 
 const pageChangeReducer = (state = inintalPageChangeState, action) => {
   switch (action.type) {
-    case CHANGE_CURRENT_PAGE:
+    case CHANGE_APP_TITLE:
       return Object.assign({}, state, {
-        currentPage: action.pageName,
-        appBarTitle: action.pageName,
-        location: state.location
+        appBarTitle: action.title,
       });
     default:
       return state;
@@ -89,7 +87,8 @@ const rootReducer = combineReducers({
   loginReducer,
   pageChangeReducer,
   teacherRoomReducer,
-  studentRoomReducer
+  studentRoomReducer,
+  router: routerReducer
 });
 
 export default rootReducer;

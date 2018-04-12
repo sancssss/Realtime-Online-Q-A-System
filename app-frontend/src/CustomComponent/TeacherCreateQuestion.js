@@ -12,7 +12,7 @@ import {
 } from 'react-bootstrap';
 import fetch from 'isomorphic-fetch';
 import {connect} from 'react-redux';
-import {teacherCreateRoom, changeCurrentPage} from '../Actions';
+import {teacherCreateRoom, changeAppTitleTo} from '../Actions';
 import {FormattedMessage, injectIntl} from 'react-intl';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
@@ -20,6 +20,8 @@ import Slider from 'material-ui/Slider';
 import Chip from 'material-ui/Chip';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import { withRouter } from 'react-router-dom';
+import { push } from 'react-router-redux';
 
 const mapStateToProps = (state, ownProps) => {
   return {location: state.pageChangeReducer.location, userid: state.loginReducer.userid}
@@ -29,7 +31,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchProps = (dispatch) => {
   return {
     teacherCreateRoom: roomData => dispatch(teacherCreateRoom(roomData)),
-    changeCurrentPage: pageName => dispatch(changeCurrentPage(pageName))
+    changeAppTitleTo: title => dispatch(changeAppTitleTo(title)),
+    switchRoute: routerName => dispatch(push(routerName))
   }
 }
 
@@ -141,14 +144,15 @@ class TeacherCreateQuestionView extends Component {
         }
         this.props.socketio.emit('joined', joinObj, String(data.roomId)); //second argument for socketio message, third argument for socketio 'room'
         this.props.teacherCreateRoom(roomData);
-        this.props.changeCurrentPage('teacher_question_room');
+        this.props.switchRoute('TeacherQuestionRoom');
+        this.props.changeAppTitleTo(<FormattedMessage id = 'question' />);
       } else {
         console.log("handleSubmitfailed:" + data.result);
-        this.props.changeCurrentPage('teacher_create_question');
+        this.props.switchRoute('TeacherCreateQuestion');
       }
     });
     event.preventDefault();
-    this.props.changeCurrentPage('teacher_create_question');
+    this.props.switchRoute('TeacherCreateQuestion');
   }
 
   render() {
@@ -244,6 +248,6 @@ class ToggleButtonGroupControlled extends React.Component {
   }
 }
 
-const TeacherCreateQuestion = injectIntl(connect(mapStateToProps, mapDispatchProps)(TeacherCreateQuestionView));
+const TeacherCreateQuestion = withRouter(injectIntl(connect(mapStateToProps, mapDispatchProps)(TeacherCreateQuestionView)));
 
 export default TeacherCreateQuestion;

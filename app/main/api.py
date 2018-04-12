@@ -16,7 +16,9 @@ class HelloWorld(Resource):
 
 api.add_resource(HelloWorld, '/')
 
+
 class UserLogin(Resource):
+    """user object{user_id, password}"""
     def put (self):
         data = request.get_json()
         request_userid = data['userid']
@@ -34,6 +36,7 @@ class UserLogin(Resource):
 api.add_resource(UserLogin, '/Login')
 
 class QuickQuestion(Resource):
+    """question object{user_id, questionText, answerValue, minuteText}"""
     def put (self):
         data = request.get_json()
         request_userid = data['userid']
@@ -60,3 +63,12 @@ class QuickQuestion(Resource):
         return {'isOk': 0}
 
 api.add_resource(QuickQuestion, '/QuickQuestion', '/QuickQuestion/<int:id>')
+
+class Answer(Resource):
+    """question int id"""
+    def get(self, id):
+        request_question = QuestionQuick().query.filter_by(question_id=id).first()#need role authentication
+        if(request_question):
+            return {'isOk': '1', 'answer': request_question.question_answer}
+
+api.add_resource(Answer, '/Answer/<int:id>')

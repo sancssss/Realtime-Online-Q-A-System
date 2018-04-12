@@ -54,17 +54,13 @@ class AppView extends Component {
     const appBarTitle = this.props.appBarTitle;
     const languge = this.state.languge;
     //background paper
-    const style = { padding: '5% 2% 2% 2%', height: '100%', margin: '5% 5% 5% 5%', display: 'block'};
+    const bgStyle = { padding: '5% 2% 2% 2%', height: '100%', margin: '5% 5% 5% 5%', display: 'block'};
+    const LangButtonStyle = window.location.pathname !== '/' ? {display: "none"} : {};//only display language switch button on Login
     return (
       <IntlProvider locale={'en'} messages={languge}>
       <MuiThemeProvider>
-        <AppBar title={appBarTitle} iconElementRight={<FlatButton label = {
-            <FormattedMessage id='change_language'/>
-          }
-          onClick = {
-            this.switchLanguage
-          } />}/>
-        <Paper style={style} zDepth={2}>
+        <AppBar title={appBarTitle} iconElementRight={ <FlatButton style ={LangButtonStyle} label = {<FormattedMessage id='change_language'/>} onClick = { this.switchLanguage } />}/>
+        <Paper style={bgStyle} zDepth={2}>
           <ConnectedRouter history={history}>
           <Switch>
             <Route exact path='/' component={Login}/>

@@ -19,6 +19,7 @@ const zh_CN = {
   selectanswer: '请选择答案',
   submit: '提交',
   submit_successful: '提交成功',
+  please_wait: '请等待',
 
   teacher_user: '教师用户',
   input_your_question: '输入您的问题',

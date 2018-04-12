@@ -27,6 +27,7 @@ class StudentQuestionRoomView extends Component {
   location = this.props.location;//location save to redux store
   constructor(props) {
     super(props);
+    this.location = this.props.location;
     this.totalSecond =  Number(this.props.endTime) - Math.round(new Date().getTime()/1000);
     this.timerId = 0;
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -38,6 +39,7 @@ class StudentQuestionRoomView extends Component {
     this.handleTeacherCommand = this.handleTeacherCommand.bind(this);
     this.questionTimeCountDown = this.questionTimeCountDown.bind(this);
     this.questionStartTimer = this.questionStartTimer.bind(this);
+    this.handleCorrectAnswer = this.handleCorrectAnswer.bind(this);
     this.state = {
       timeRemain: 3,
       questionText: '',
@@ -45,11 +47,17 @@ class StudentQuestionRoomView extends Component {
       answerValue: '',//student's answer
       optionalAnswerOpen: false, //control optional answer dialog
       optionalAnswerValue: '',
+      correctAnswer: <FormattedMessage id='please_wait'/>,//remote fetch correct answer
       isSubmitted: false,
       snackbarOpen: false,
     }
     this.readySocket();
   }
+
+  componentDidMount() {
+    this.questionStartTimer();
+  }
+
   //Snackbar notify user submit successful
   handleOpenNotification() {
     this.setState({snackbarOpen: true});
@@ -68,6 +76,7 @@ class StudentQuestionRoomView extends Component {
       let textOjb = {type: 'answer', userid: this.props.userid, answer: answer};
       this.props.socketio.emit('text', textOjb, String(this.props.roomId))
       this.setState({isSubmitted: true});;
+      this.handleCorrectAnswer();
       this.handleOpenNotification();//notify user submitted successful
       event.preventDefault();
     } else {
@@ -94,19 +103,14 @@ class StudentQuestionRoomView extends Component {
     });
   }
 
-  componentDidMount() {
-    console.log("start timer");
-    this.questionStartTimer();
-  }
-
   //refresh the question remain time
   questionTimeCountDown() {
     let second = Number(this.state.timeRemain) - 1;
-    console.log("second: "+ second);
     this.setState({ timeRemain: second });
     if (second === 0) {
       this.setState({isSubmitted: true});
       clearInterval(this.timerId);
+      this.handleCorrectAnswer();
     }
   }
 
@@ -131,9 +135,63 @@ class StudentQuestionRoomView extends Component {
         this.setState({isSubmitted: true, timeRemain: 0});
         //set timer to zero
         clearInterval(this.timerId);
+        this.handleCorrectAnswer();
         break;
       default:
     }
+  }
+
+  handleCorrectAnswer() {
+    this.getAnswer().then(
+      (data) => {
+        if(data.result === true) {
+          this.setState({correctAnswer: data.answer});
+        } else {
+          console.log("getAnswerfailed:" + data.result);
+        }
+      }
+    );
+  }
+
+  //from roomid to get the answer
+  getAnswer() {
+    const location = this.location;
+    const questionId = this.props.roomId;
+    const uri = location + 'Answer/'+ questionId;
+    return fetch(uri, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "same-origin"
+    }).then(
+      function(response) {
+        //console.log("response:" + response.json());
+        return response.json();
+    }).then(
+      function(json) {
+        console.log("obj.json:" +  json.answer);
+        //isOK == 1 mean login data is vaild
+        if(json.isOk === '1') {
+          return {
+            result: true,
+            answer: json.answer,
+          };
+        }else {
+          console.log("error by input data");
+          return {
+            result: false
+          };
+        }
+      }
+    ).catch(
+      function(exception) {
+        console.log('error by exception', exception);
+        return {
+          result: false
+        };
+      }
+    );
   }
 
   readySocket() {
@@ -160,6 +218,7 @@ class StudentQuestionRoomView extends Component {
     const disableAnswerGroup = optionalAnswerValue === '' ? false : true;
     const handleAnswerDialog = this.handleAnswerDialog;
     const optionalAnswerActions = [ <FlatButton label={<FormattedMessage id='submit'/>} primary={true} keyboardFocused={true} onClick={handleAnswerDialog} />,];
+    const correctAnswer = this.state.correctAnswer;
     const isSubmitted = this.state.isSubmitted;
     const snackbarOpen = this.state.snackbarOpen;
     const handleOpenNotification = this.handleOpenNotification;
@@ -214,8 +273,11 @@ class StudentQuestionRoomView extends Component {
             </Col>
           </FormGroup>
           <FormGroup>
-          <Col xsOffset={1} xs={8}>
+          <Col xsOffset={1} xs={9}>
               <RaisedButton type="submit" primary={true} disabled={isSubmitted} onClick={handleSubmit} label={<FormattedMessage id='submit'/>}/>
+          </Col>
+          <Col xsOffset={1} xs={9}>
+            <FormattedMessage id = 'correct_answer' />: {correctAnswer}
           </Col>
           </FormGroup>
       </Form>

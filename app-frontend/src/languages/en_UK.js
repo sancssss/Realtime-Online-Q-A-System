@@ -19,6 +19,7 @@ const en_UK = {
   selectanswer: 'Select your answer',
   submit: 'Submit',
   submit_successful: 'Submit successful',
+  please_wait: 'Please wait',
 
   teacher_user: 'Teacher User',
   input_your_question: 'Input your question',

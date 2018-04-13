@@ -113,7 +113,7 @@ class LoginView extends Component {
     const handleChange = this.handleChange;
     const handleClick = this.handleClick;
 
-    return (<Form horizontal="horizontal">
+    return (<Form horizontal={true}>
       <FormGroup controlId="formHorizontalText">
         <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
               <h4><Glyphicon glyph="user" /></h4>

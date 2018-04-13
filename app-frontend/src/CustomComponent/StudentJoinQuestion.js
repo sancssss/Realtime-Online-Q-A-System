@@ -97,7 +97,8 @@ class StudentJoinQuestionView extends Component {
     this.getQuestion().then(
       //use "=>" do not create a new this and this.setState issue solved
       (data) => {
-      if(data.result === true) {
+      //data is validate and the remain time is enough
+      if(data.result === true && data.endTime > Math.round(new Date().getTime()/1000)) {
         console.log("handleSubmitsuccessful");
         let joinOjb = {userid: this.props.userid};
         let roomData = {
@@ -113,7 +114,7 @@ class StudentJoinQuestionView extends Component {
       } else {
         console.log("handleSubmitfailed:" + data.result);
         event.preventDefault();
-        this.props.switch('studentJoinRoom');
+        this.props.switchRoute('StudentJoinQuestion');
       }
     }
     );

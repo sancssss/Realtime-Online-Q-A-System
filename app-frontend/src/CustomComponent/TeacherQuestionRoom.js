@@ -168,11 +168,8 @@ class TeacherQuestionRoomView extends Component {
           </CardText>
           </Card>
           <FormGroup>
-          <Col componentClass={ControlLabel} xs={1} xsOffset={1}>
-            <h4><Glyphicon glyph="time" /></h4>
-          </Col>
-          <Col xs={8}>
-              <h5><FormattedMessage id='student_correct_rate'/></h5>
+          <Col xs={8} xsOffset={1}>
+              <h5><FormattedMessage id='student_correct_rate'/> ({correctSubmit}/{totalSubmit})</h5>
           </Col>
           </FormGroup>
           <FormGroup>

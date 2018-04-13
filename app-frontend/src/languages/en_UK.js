@@ -20,6 +20,7 @@ const en_UK = {
   submit: 'Submit',
   submit_successful: 'Submit successful',
   please_wait: 'Please wait',
+  correct_rate: 'Correct Rate',
 
   teacher_user: 'Teacher User',
   input_your_question: 'Input your question',

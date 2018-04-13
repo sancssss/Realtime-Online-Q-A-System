@@ -14,7 +14,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton'
 import Paper from 'material-ui/Paper';
-import { withRouter } from 'react-router-dom'
 import { ConnectedRouter } from 'react-router-redux';
 import { history } from './Stores';
 

@@ -20,6 +20,7 @@ const zh_CN = {
   submit: '提交',
   submit_successful: '提交成功',
   please_wait: '请等待',
+  correct_rate: '正确率',
 
   teacher_user: '教师用户',
   input_your_question: '输入您的问题',

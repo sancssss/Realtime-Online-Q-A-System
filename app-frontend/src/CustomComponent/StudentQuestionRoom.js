@@ -48,6 +48,7 @@ class StudentQuestionRoomView extends Component {
       optionalAnswerOpen: false, //control optional answer dialog
       optionalAnswerValue: '',
       correctAnswer: <FormattedMessage id='please_wait'/>,//remote fetch correct answer
+      correctRate: <FormattedMessage id='please_wait'/>,
       isSubmitted: false,
       snackbarOpen: false,
     }
@@ -141,16 +142,54 @@ class StudentQuestionRoomView extends Component {
     }
   }
 
+  //get correct answer from server then check the answer put a student answer record
   handleCorrectAnswer() {
     this.getAnswer().then(
       (data) => {
+        const isCorrect = String(data.answer).valueOf() === String(this.state.answerValue).valueOf()
         if(data.result === true) {
           this.setState({correctAnswer: data.answer});
+          this.setNewAnswerRecord(Boolean(isCorrect) === true ? 1 : 0);
         } else {
           console.log("getAnswerfailed:" + data.result);
         }
       }
     );
+    this.getAnswerRecord('statistic').then(
+      (data) => {
+        this.setState({correctRate: (data.correctRecordCount/data.totalRecordCount).toFixed(2) * 100 + '%'});
+      }
+    );
+  }
+
+  setNewAnswerRecord(isCorrect) {
+    const uri = this.location + 'AnswerRecord';
+    const data = {
+      "userid": this.props.userid,
+      "questionId": this.props.roomId,
+      "isCorrect": isCorrect,
+    }
+    return fetch(uri, {
+      method: "PUT",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "same-origin"
+    }).then(function(response) {
+      return response.json();
+    }).then(function(json) {
+      //isOK == 1 mean login data is vaild
+      if (json.isOk === '1') {
+        console.log("successfully set a record");
+      } else {
+        console.log("error by input data");
+        return {result: false};
+      }
+    }).catch(function(exception) {
+      console.log('login error by exception', exception);
+      return {result: false};
+    });
   }
 
   //from roomid to get the answer
@@ -176,6 +215,47 @@ class StudentQuestionRoomView extends Component {
           return {
             result: true,
             answer: json.answer,
+          };
+        }else {
+          console.log("error by input data");
+          return {
+            result: false
+          };
+        }
+      }
+    ).catch(
+      function(exception) {
+        console.log('error by exception', exception);
+        return {
+          result: false
+        };
+      }
+    );
+  }
+
+  getAnswerRecord(action) {
+    const location = this.location;
+    const userid = this.props.userid;
+    const uri = location + 'AnswerRecord/'+ userid + '/' + action;
+    return fetch(uri, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "same-origin"
+    }).then(
+      function(response) {
+        //console.log("response:" + response.json());
+        return response.json();
+    }).then(
+      function(json) {
+        //isOK == 1 mean data is vaild
+        console.log("json.total_record_count:  "+ json.total_record_count)
+        if(json.isOk === '1') {
+          return {
+            result: true,
+            totalRecordCount: json.total_record_count,
+            correctRecordCount: json.correct_record_count,
           };
         }else {
           console.log("error by input data");
@@ -225,14 +305,19 @@ class StudentQuestionRoomView extends Component {
     const handleCloseNotification = this.handleCloseNotification;
     const totalSecond = this.totalSecond;
     const remainSecond = Number(this.state.timeRemain);
+    const correctRate = this.state.correctRate;
     return (
       <Form horizontal>
           <FormGroup>
-            <Col xs={8} xsOffset={0}>
+            <Col xs={3} xsOffset={0}>
               <Chip>Room ID: {roomId}</Chip>
+            </Col>
+            <Col xs={2}>
+            <Chip><FormattedMessage id='correct_rate'/>: {correctRate}</Chip>
             </Col>
           </FormGroup>
           <Card>
+          <CardText>
           <FormGroup>
           <Col xs={1} xsOffset={1}>
             <h4><Glyphicon glyph="question-sign" /></h4>
@@ -243,17 +328,16 @@ class StudentQuestionRoomView extends Component {
           </FormGroup>
           <FormGroup>
           <Col xs={8} xsOffset={1}>
-            <CardText>
               <Well>
                 {questionText}
               </Well>
-            </CardText>
           </Col>
           <Col xs={8} xsOffset={1}>
               <h5><FormattedMessage id='time_remain'/>: {remainSecond}<FormattedMessage id='second_timescale'/></h5>
               <LinearProgress mode="determinate" value={Number((100 - remainSecond/totalSecond*100).toFixed(2))} />
           </Col>
           </FormGroup>
+          </CardText>
           </Card>
           <FormGroup>
           <Col componentClass={ControlLabel} xs={1} xsOffset={1}>

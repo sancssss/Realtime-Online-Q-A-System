@@ -157,7 +157,8 @@ class StudentQuestionRoomView extends Component {
     );
     this.getAnswerRecord('statistic').then(
       (data) => {
-        this.setState({correctRate: (data.correctRecordCount/data.totalRecordCount).toFixed(2) * 100 + '%'});
+        let correctRate = (data.correctRecordCount/data.totalRecordCount).toFixed(2) * 100;
+        this.setState({correctRate: isNaN(correctRate) ? 0 : correctRate + '%'});
       }
     );
   }
@@ -182,8 +183,9 @@ class StudentQuestionRoomView extends Component {
       //isOK == 1 mean login data is vaild
       if (json.isOk === '1') {
         console.log("successfully set a record");
+        return {result: true};
       } else {
-        console.log("error by input data");
+        console.log("error set a record");
         return {result: false};
       }
     }).catch(function(exception) {

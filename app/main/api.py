@@ -92,7 +92,7 @@ class AnswerRecord(Resource):
         request_userid = data['userid']
         request_question_id = data['questionId']
         request_is_correct = int(data['isCorrect'])
-        if(request_userid and request_question_id and request_is_correct):
+        if(request_userid and request_question_id):
             request_answer_time = time.time()
             new_answer_record = StudentAnswerRecord(user_number=request_userid, question_id=request_question_id, is_correct=request_is_correct, answer_time=request_answer_time)
             db.session.add(new_answer_record)

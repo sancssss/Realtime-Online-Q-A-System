@@ -14,6 +14,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton'
 import Paper from 'material-ui/Paper';
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
 import { ConnectedRouter } from 'react-router-redux';
 import { history } from './Stores';
 
@@ -33,8 +35,10 @@ class AppView extends Component {
   constructor(props) {
     super(props);
     this.switchLanguage = this.switchLanguage.bind(this);
+    this.handleLeftButtonClick = this.handleLeftButtonClick.bind(this);
     this.state = {
-      languge: en_UK, langugeCode: 'en'
+      languge: en_UK, langugeCode: 'en',
+      drawerOpen: false
     }
   }
 
@@ -49,8 +53,13 @@ class AppView extends Component {
     }
   }
 
+  handleLeftButtonClick() {
+    this.setState({drawerOpen: !this.state.drawerOpen});
+  }
+
   render() {
     const appBarTitle = this.props.appBarTitle;
+    const handleLeftButtonClick = this.handleLeftButtonClick;
     const languge = this.state.languge;
     //background paper
     const bgStyle = { padding: '5% 2% 2% 2%', height: '100%', margin: '5% 5% 5% 5%', display: 'block'};
@@ -58,7 +67,11 @@ class AppView extends Component {
     return (
       <IntlProvider locale={'en'} messages={languge}>
       <MuiThemeProvider>
-        <AppBar title={appBarTitle} iconElementRight={ <FlatButton style ={LangButtonStyle} label = {<FormattedMessage id='change_language'/>} onClick = { this.switchLanguage } />}/>
+        <AppBar title={appBarTitle} onLeftIconButtonClick={handleLeftButtonClick} iconElementRight={ <FlatButton style ={LangButtonStyle} label = {<FormattedMessage id='change_language'/>} onClick = { this.switchLanguage } />}/>
+        <Drawer docked={false} width={200} open={this.state.drawerOpen} onRequestChange={(drawerOpen) => this.setState({drawerOpen})}>
+            <MenuItem>Version</MenuItem>
+            <MenuItem>V1.0</MenuItem>
+        </Drawer>
         <Paper style={bgStyle} zDepth={2}>
           <ConnectedRouter history={history}>
           <Switch>

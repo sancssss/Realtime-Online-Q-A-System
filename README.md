@@ -1,5 +1,8 @@
 # Real-time Online Q&A system
 ### Based on ReactJS, Flask and SocketIO
+##### Deployment environment
+AWS: EC2 + S3 + RDS
+http://realtime-qa.p1y.me/
 ##### Features:
 ###### Student:
 * Chinese and English bilingual system
